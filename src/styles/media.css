@@ -1,0 +1,77 @@
+/* src/styles/media.css - Updated with Analytics-style header */
+.media-page {
+  padding: 20px;
+  box-sizing: border-box;
+  color: #111827;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+.media-breadcrumb {
+  color: #6b7280;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.media-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.media-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.media-sub {
+  color: #6b7280;
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+/* Card item */
+.media-page .ant-card {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.media-page .ant-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+/* Cover section */
+.media-page .ant-card-cover {
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 160px;
+}
+
+/* Upload drag area */
+.media-page .ant-upload-drag {
+  border-radius: 12px;
+  background: #fafcff;
+}
+
+/* Tabs */
+.media-page .ant-tabs-tab {
+  font-weight: 500;
+}
+
+/* Statistic box */
+.media-page .ant-card .ant-statistic {
+  text-align: center;
+}
+
+/* File name */
+.media-page .ant-card-meta-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Remove the ant-design override since we're not using PageContainer anymore */

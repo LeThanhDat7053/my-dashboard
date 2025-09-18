@@ -1,0 +1,349 @@
+/* CSS cải thiện cho TranslateModal - Thêm vào categories.css */
+
+/* Modal overlay */
+.translate-modal-overlay {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(1px);
+}
+
+/* Modal container */
+.translate-modal-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+/* Header */
+.translate-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background: white;
+}
+
+.translate-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.translate-modal-close {
+  color: #9ca3af;
+  color: #6b7280;
+  font-size: 24px;
+  line-height: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* Language tabs */
+.translate-lang-tabs {
+  padding: 16px 24px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.translate-lang-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: white;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  transition: all 0.15s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.translate-lang-tab:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.translate-lang-tab.active {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+/* Add language button */
+.translate-add-lang-wrapper {
+  position: relative;
+}
+
+.translate-add-lang-btn {
+  width: 32px;
+  height: 32px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1;
+}
+
+.translate-add-lang-btn:hover {
+  background: #059669;
+  transform: scale(1.05);
+}
+
+/* Language dropdown */
+.translate-lang-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 6px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  min-width: 160px;
+  overflow: hidden;
+  animation: slideDown 0.2s ease-out;
+}
+
+.translate-lang-dropdown button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #374151;
+  transition: background 0.15s ease;
+}
+
+.translate-lang-dropdown button:hover {
+  background: #f3f4f6;
+}
+
+/* Content area */
+.translate-modal-content {
+  padding: 24px;
+  max-height: calc(90vh - 160px);
+  overflow-y: auto;
+}
+
+/* Content sections */
+.translate-content-section {
+  margin-bottom: 24px;
+}
+
+.translate-content-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+/* Content boxes */
+.translate-content-box {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #374151;
+  min-height: 80px;
+}
+
+/* Original content box */
+.translate-content-box.original {
+  background: #f9fafb;
+  border-color: #e5e7eb;
+}
+
+/* Translated content box */
+.translate-content-box.translated {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  position: relative;
+}
+
+/* Editable content styling */
+.translate-content-box.translated[contenteditable="true"] {
+  outline: none;
+  cursor: text;
+}
+
+.translate-content-box.translated[contenteditable="true"]:focus {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+  background: #f0fdf4;
+}
+
+/* Content title styling */
+.translate-content-title {
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.translate-content-title[contenteditable="true"] {
+  border-bottom: 2px solid transparent;
+  padding-bottom: 4px;
+  outline: none;
+}
+
+.translate-content-title[contenteditable="true"]:focus {
+  border-bottom-color: #22c55e;
+  background: rgba(34, 197, 94, 0.05);
+  border-radius: 4px 4px 0 0;
+  padding: 4px 8px 8px 8px;
+  margin: -4px -8px 8px -8px;
+}
+
+/* Content description */
+.translate-content-description {
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.translate-content-description[contenteditable="true"]:focus {
+  background: rgba(34, 197, 94, 0.05);
+  border-radius: 4px;
+  padding: 8px;
+  margin: -8px;
+}
+
+/* Helper text */
+.translate-helper-text {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+/* Action buttons */
+.translate-modal-actions {
+  padding: 20px 24px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.translate-modal-actions button {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.translate-btn-cancel {
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.translate-btn-cancel:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.translate-btn-regenerate {
+  background: #3b82f6;
+  color: white;
+}
+
+.translate-btn-regenerate:hover {
+  background: #2563eb;
+}
+
+.translate-btn-accept {
+  background: #10b981;
+  color: white;
+}
+
+.translate-btn-accept:hover {
+  background: #059669;
+}
+
+/* Button icons */
+.translate-modal-actions button svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover effects */
+.translate-content-box.translated:hover {
+  border-color: #22c55e;
+}
+
+/* Focus states for accessibility */
+.translate-lang-tab:focus-visible,
+.translate-add-lang-btn:focus-visible,
+.translate-modal-actions button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .translate-modal-container {
+    margin: 20px;
+    max-width: calc(100vw - 40px);
+  }
+  
+  .translate-lang-tabs {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  
+  .translate-modal-actions {
+    flex-direction: column-reverse;
+  }
+  
+  .translate-modal-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+}
