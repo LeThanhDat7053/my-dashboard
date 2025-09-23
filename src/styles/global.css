@@ -25,6 +25,7 @@ body {
   left: 250px;
   right: 0;
   z-index: 100;
+  
 }
 
 .header-left {
@@ -66,8 +67,6 @@ body {
 
 .search-box input:focus {
   outline: none;
-  ring: 2px;
-  ring-color: #3b82f6;
   background: white;
 }
 
@@ -290,6 +289,8 @@ body {
   margin-top: 64px;
   padding: 24px;
   min-height: calc(100vh - 64px);
+  width: calc(100% - 250px); /* ✅ chiếm full chiều ngang trừ sidebar */
+  background: #f8fafc;  
 }
 
 /* Dashboard Cards */
@@ -570,7 +571,7 @@ body {
   .header {
     left: 0;
   }
-  
+
   .main-content {
   margin-left: 250px;   /* giữ chỗ cho sidebar */
   margin-top: 64px;     /* giữ chỗ cho header */
@@ -580,6 +581,8 @@ body {
   width: 100%;          /* full width */
   max-width: none !important;
   margin-right: 0;      /* bỏ căn giữa */
+  width: calc(100% - 250px); /* ✅ chiếm full chiều ngang trừ sidebar */
+  background: #f8fafc;  
 }
   
   .dashboard-cards {

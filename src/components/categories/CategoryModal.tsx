@@ -1,4 +1,4 @@
-// src/components/categories/categoryModal.tsx
+// src/components/categories/CategoryModal.tsx
 
 import React, { useState, useEffect } from 'react';
 import type { Category, CategoryFormData, Language } from '../../types/categories';
@@ -23,7 +23,7 @@ const iconMap: Record<string, string> = {
   'star': '⭐', 'heart': '❤️'
 };
 
-const languageLabels: Record<Language, string> = {
+const languageLabels: Partial<Record<Language, string>> = {
   en: 'English',
   vi: 'Tiếng Việt',
   ja: '日本語'
@@ -43,7 +43,7 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
       en: { title: '', description: '' },
       vi: { title: '', description: '' },
       ja: { title: '', description: '' }
-    }
+    } 
   });
 
   useEffect(() => {
@@ -109,8 +109,8 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
       ...prev,
       translations: {
         ...prev.translations,
-        [activeTab]: {
-          ...prev.translations[activeTab],
+        [activeTab as keyof typeof prev.translations]: {
+          ...prev.translations[activeTab as keyof typeof prev.translations],  
           title: value
         }
       }
@@ -119,7 +119,7 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
     if (activeTab === 'en') {
       generateSlug(value);
     }
-  };
+  };  
 
   const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
     const value = event.target.value;
@@ -128,7 +128,7 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
       translations: {
         ...prev.translations,
         [activeTab]: {
-          ...prev.translations[activeTab],
+          ...prev.translations[activeTab as keyof typeof prev.translations],
           description: value
         }
       }
@@ -217,7 +217,7 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
               </label>
               <input
                 type="text"
-                value={formData.translations[activeTab]?.title || ''}
+                value={formData.translations[activeTab as keyof typeof formData.translations]?.title || ''}
                 onChange={handleTitleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Category title"
@@ -230,7 +230,7 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
                 Description ({languageLabels[activeTab]})
               </label>
               <textarea
-                value={formData.translations[activeTab]?.description || ''}
+                value={formData.translations[activeTab as keyof typeof formData.translations]?.description || ''}
                 onChange={handleDescriptionChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[80px]"
                 placeholder="Brief description of this category"

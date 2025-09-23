@@ -55,8 +55,12 @@ export const TranslateModal: React.FC<TranslateModalProps> = ({
           title: 'ホテルチェックインガイドライン', 
           description: 'タビタワーホテルへようこそ！私たちのチェックインプロセスは...' 
         },
-        kr: { title: '', description: '' },
-        fr: { title: '', description: '' }
+        kr: { 
+          title: '호텔 체크인 안내', 
+          description: '환영합니다, 타비 타워 호텔에 오신 것을! 저희 체크인 절차는 원활하고 효율적으로 진행되도록 준비되어 있습니다...' },
+        fr: { 
+          title: 'Procédure d’enregistrement à l’hôtel', 
+          description: 'Bienvenue au Tabi Tower Hotel ! Notre procédure d’enregistrement est conçue pour être fluide et efficace' }
       };
       
       setTranslatedContent(mockTranslations);
