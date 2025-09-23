@@ -154,7 +154,7 @@ const Properties: React.FC = () => {
   return (
     // Thêm wrapper class để target CSS
     <div className="properties-page">
-      <div className="app-layout"  style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh' }}>
+      <div className="app-layout"  style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', }}>
         {/* Sidebar */}
         <div className="sidebar">
           <div className="sidebar-header">

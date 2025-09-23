@@ -1,13 +1,18 @@
 /* src/styles/properties.css */
+body {
+  overflow: hidden;
+}
 
 .main-content {
-  margin-left: 250px;                 /* chừa chỗ sidebar */
-  margin-top: 64px;                   /* chừa chỗ header */
-  width: calc(100% - 250px);          /* chiếm phần còn lại */
+  margin-left: 250px;       /* chừa chỗ sidebar */
+  margin-top: 64px;         /* chừa chỗ header */
+  width: calc(100% - 250px);
   padding: 24px;
-  min-height: calc(100vh - 64px);
-  box-sizing: border-box;             /* tránh tràn do padding */
-  overflow-x: hidden;                 /* không cho tràn ngang */
+  height: calc(100vh - 64px); /* dùng height thay vì min-height */
+  overflow-y: auto;          /* chỉ scroll ở đây */
+  overflow-x: hidden;
+  box-sizing: border-box;
+  background: #f8fafc;
 }
 
 .hotels-header {
