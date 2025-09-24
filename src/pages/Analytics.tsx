@@ -475,63 +475,7 @@ const Analytics: React.FC = () => {
       </div>
 
       {/* Heatmap */}
-      <section className="heatmap-section">
-        <div className="heatmap-card">
-          <div className="chart-header" style={{ marginBottom: 12 }}>
-            <div className="chart-title">User Activity Heatmap</div>
-            <div className="chart-filters">
-              <button
-                className={`filter-btn ${heatmapRange === "week" ? "active" : ""}`}
-                onClick={() => setHeatmapRange("week")}
-              >
-                This Week
-              </button>
-              <button
-                className={`filter-btn ${heatmapRange === "month" ? "active" : ""}`}
-                onClick={() => setHeatmapRange("month")}
-              >
-                This Month
-              </button>
-            </div>
-          </div>
-
-          {heatmapRange === "week" ? (
-            <div className="heatmap-grid">
-              {heatmapData.map((value, i) => (
-                <div
-                  key={i}
-                  className={`heatmap-cell heat-${value}`}
-                >
-                  {i + 1}
-                </div>
-              ))}
-            </div>
-
-          ) : (
-            <div className="heatmap-grid month">
-              {/* month view cells */}
-              {monthData.map((day, i) => (
-                <div
-                  key={i}
-                  className={`heatmap-day heat-${day.value}`}
-                  title={`${(day.value * 50).toLocaleString()} interactions`}
-                >
-                  {day.date}
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div className="heatmap-legend" style={{ marginTop: 12 }}>
-            <span>Less activity</span>
-            <div className="legend-item"><div className="legend-color heat-0" /></div>
-            <div className="legend-item"><div className="legend-color heat-2" /></div>
-            <div className="legend-item"><div className="legend-color heat-4" /></div>
-            <div className="legend-item"><div className="legend-color heat-6" /></div>
-            <span>More activity</span>
-          </div>
-        </div>
-      </section>
+      
 
       {/* User Flow */}
       <div className="table-card" style={{ marginTop: 18 }}>
