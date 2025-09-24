@@ -10,20 +10,21 @@ interface CategoryCardProps {
   onTranslate: (category: Category) => void;
 }
 
-const ICON_EMOJI: Record<string, string> = {
-  'info-circle': 'ℹ️',
-  'concierge-bell': '🛎️',
-  'building': '🏢',
-  'hiking': '🥾',
-  'car': '🚗',
-  'spa': '🧘',
-  'utensils': '🍽️',
-  'shopping-bag': '🛍️',
-  'share-alt': '🔗',
-  'file-contract': '📄',
-  'star': '⭐',
-  'heart': '❤️'
+const ICON_CLASS: Record<string, string> = {
+  'info-circle': 'fa-info-circle',
+  'concierge-bell': 'fa-concierge-bell',
+  'building': 'fa-building',
+  'hiking': 'fa-hiking',
+  'car': 'fa-car',
+  'spa': 'fa-spa',
+  'utensils': 'fa-utensils',
+  'shopping-bag': 'fa-shopping-bag',
+  'share-alt': 'fa-share-alt',
+  'file-contract': 'fa-file-contract',
+  'star': 'fa-star',
+  'heart': 'fa-heart',
 };
+
 
 const GRADIENT_COLORS: Record<string, string> = {
   'info-circle': 'from-indigo-500 to-purple-600',
@@ -47,7 +48,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
   onViewFeatures,
   onTranslate,
 }) => {
-  const icon = ICON_EMOJI[category.icon] ?? '📦';
+  const icon = ICON_CLASS[category.icon] ?? 'fa-box';
   const gradient = GRADIENT_COLORS[category.icon] ?? 'from-gray-500 to-gray-600';
 
   const handleEdit = () => onEdit(category);
@@ -60,7 +61,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
       {/* Header with icon and menu */}
       <div className="flex items-start justify-between p-4 pb-3">
         <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white text-lg shadow-sm`}>
-          {icon}
+          <i className={`fas ${ICON_CLASS[category.icon] ?? 'fa-box'}`}></i>
         </div>
         
         {/* Type badge and menu */}
