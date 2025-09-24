@@ -406,20 +406,6 @@ const Settings: React.FC = () => {
         </nav>
       </div>
 
-      {/* Header */}
-      <header className="settings-header-container">
-        <div className="settings-header-left">
-          <h1 className="settings-page-title">Settings</h1>
-          <div className="settings-breadcrumb">Home / Settings</div>
-        </div>
-        
-        <div className="settings-header-right">
-          <button className="settings-btn-primary" onClick={saveAllSettings}>
-            <i className="fas fa-save"></i>
-            Save Changes
-          </button>
-        </div>
-      </header>
 
       {/* Success Message */}
       {showSuccessMessage && (
@@ -437,7 +423,7 @@ const Settings: React.FC = () => {
             <p className="settings-subtitle">Configure your hotel property settings and preferences</p>
           </div>
         </div>
-
+        
         {/* Settings Tabs */}
         <div className="settings-tabs">
           {tabs.map((tab) => (

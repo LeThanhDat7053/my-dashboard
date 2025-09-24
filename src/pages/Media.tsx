@@ -150,7 +150,7 @@ export default function Media() {
   return (
     <div className="media-page">
       {/* Custom Header like Analytics */}
-      <div className="media-breadcrumb">Home / Media</div>
+  
 
       <div className="media-header">
         <div>

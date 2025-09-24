@@ -209,7 +209,7 @@ const Analytics: React.FC = () => {
 
   return (
     <div className="analytics-page">
-      <div className="analytics-breadcrumb">Dashboard / Analytics</div>
+      
 
       <div className="analytics-header">
         <div>

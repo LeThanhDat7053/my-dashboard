@@ -21,7 +21,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   const getPageInfo = (pathname: string) => {
     switch (pathname) {
       case '/':
-        return { title: 'Dashboard', breadcrumb: 'Home / Dashboard' };
+        return { title: 'Dashboard', breadcrumb: 'Main / Dashboard' };
       case '/users':
         return { title: 'Users & Roles', breadcrumb: 'Management / Users & Roles' };
       case '/settings':
