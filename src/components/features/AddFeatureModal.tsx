@@ -134,7 +134,7 @@ const AddFeatureModal: React.FC<AddFeatureModalProps> = ({ isOpen, onClose, onSa
             </select>
           </div>
 
-          <div className="add-feature-form-group">
+          {/* <div className="add-feature-form-group">
             <label className="add-feature-form-label">VR360 Tour Link</label>
             <input
               type="url"
@@ -146,7 +146,7 @@ const AddFeatureModal: React.FC<AddFeatureModalProps> = ({ isOpen, onClose, onSa
             <small className="add-feature-form-hint">
               <i className="fas fa-info-circle"></i> Optional: Link to virtual reality tour of the hotel
             </small>
-          </div>
+          </div> */}
 
           <div className="add-feature-form-group">
             <label className="add-feature-form-label">Slug / External Link *</label>

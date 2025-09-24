@@ -11,6 +11,7 @@ interface Post {
   status: 'published' | 'draft';
   updatedAt: string;
   content?: string;
+  vrLink?: string;
 }
 
 interface EditPostModalProps {
@@ -32,7 +33,8 @@ const EditPostModal: React.FC<EditPostModalProps> = ({ isOpen, onClose, post, on
     slug: '',
     target: 'self',
     content: '',
-    status: 'draft'
+    status: 'draft',
+    vrLink: ''
   });
 
   useEffect(() => {
@@ -43,7 +45,8 @@ const EditPostModal: React.FC<EditPostModalProps> = ({ isOpen, onClose, post, on
         slug: '',
         target: 'self',
         content: post.content || '',
-        status: post.status
+        status: post.status,
+        vrLink: post.vrLink || ''
       });
       setEditorContent(post.content || '');
       setHtmlContent(post.content || '');
@@ -54,7 +57,8 @@ const EditPostModal: React.FC<EditPostModalProps> = ({ isOpen, onClose, post, on
         slug: '',
         target: 'self',
         content: '<p>Start writing your content here...</p>',
-        status: 'draft'
+        status: 'draft',
+        vrLink: ''
       });
       setEditorContent('<p>Start writing your content here...</p>');
       setHtmlContent('<p>Start writing your content here...</p>');
@@ -195,6 +199,20 @@ const EditPostModal: React.FC<EditPostModalProps> = ({ isOpen, onClose, post, on
               onChange={(e) => setPostForm(prev => ({ ...prev, title: e.target.value }))}
               required
             />
+          </div>
+
+          <div className="edit-post-form-group">
+            <label className="edit-post-form-label">VR360 Tour Link</label>
+            <input
+              type="url"
+              className="edit-post-form-input"
+              value={postForm.vrLink}
+              onChange={(e) => setPostForm(prev => ({ ...prev, vrLink: e.target.value }))}
+              placeholder="https://example.com/vr-tour"
+            />
+            <small className="edit-post-form-hint">
+              <i className="fas fa-info-circle"></i> Optional: Link to virtual reality tour of the hotel
+            </small>
           </div>
 
           <div className="edit-post-form-group">

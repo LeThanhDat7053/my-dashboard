@@ -205,7 +205,7 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
                 >
                   {iconMap[icon] || '📦'}
                 </button>
-              ))}
+              ))}   
             </div>
           </div>
 
@@ -259,3 +259,5 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
     </div>
   );
 };
+
+

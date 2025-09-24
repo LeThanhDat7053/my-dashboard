@@ -97,7 +97,7 @@ const Reports: React.FC = () => {
         ))}
       </div>
 
-      {/* Chart Placeholder */}
+      {/* Chart Placeholder */}.
       <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">Revenue Trend</h3>
