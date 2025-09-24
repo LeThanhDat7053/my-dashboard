@@ -50,26 +50,8 @@ const Header: React.FC<HeaderProps> = ({
       
         <div className="header-right">
         
-        <button className="notification-btn" onClick={handleNotifications}>
-          <i className="fas fa-bell"></i>
-          <span className="notification-badge"></span>
-        </button>
         
-        <div className="user-menu">
-          {user.avatar ? (
-            <img 
-              src={user.avatar} 
-              alt={user.name}
-              className="user-avatar"
-            />
-          ) : (
-            <div className="user-avatar">{user.initials}</div>
-          )}
-          <div className="user-info">
-            <div className="user-name">{user.name}</div>
-            <div className="user-role">{user.role}</div>
-          </div>
-        </div>
+        
       </div>
     </header>
   );
