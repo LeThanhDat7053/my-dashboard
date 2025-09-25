@@ -48,7 +48,6 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
   onViewFeatures,
   onTranslate,
 }) => {
-  const icon = ICON_CLASS[category.icon] ?? 'fa-box';
   const gradient = GRADIENT_COLORS[category.icon] ?? 'from-gray-500 to-gray-600';
 
   const handleEdit = () => onEdit(category);

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/settings.css';
 
 // Interfaces for type safety
 interface GeneralSettings {
@@ -70,14 +69,6 @@ interface Language {
   flag: string;
 }
 
-interface NavItem {
-  href: string;
-  icon: string;
-  text: string;
-  isActive?: boolean;
-  isLogout?: boolean;
-}
-
 const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('general');
   const [successMessage, setSuccessMessage] = useState<string>('');
@@ -145,24 +136,6 @@ const Settings: React.FC = () => {
     { code: 'ko', name: 'Korean', native: '한국어', flag: '🇰🇷' },
     { code: 'zh', name: 'Chinese (Simplified)', native: '简体中文', flag: '🇨🇳' },
     { code: 'fr', name: 'French', native: 'Français', flag: '🇫🇷' }
-  ];
-
-  const navItems: NavItem[] = [
-    { href: '/', icon: 'fas fa-home', text: 'Dashboard' },
-    { href: '/categories', icon: 'fas fa-layer-group', text: 'Categories' },
-    { href: '/features', icon: 'fas fa-puzzle-piece', text: 'Features' },
-    { href: '/properties', icon: 'fas fa-building', text: 'Properties' }
-  ];
-
-  const contentNavItems: NavItem[] = [
-    { href: '/media', icon: 'fas fa-images', text: 'Media Library' },
-    { href: '/analytics', icon: 'fas fa-chart-bar', text: 'Analytics' }
-  ];
-
-  const managementNavItems: NavItem[] = [
-    { href: '/users', icon: 'fas fa-users', text: 'Users & Roles' }, // ← SỬA THÀNH /users
-    { href: '/settings', icon: 'fas fa-cog', text: 'Settings', isActive: true },
-    { href: '/login', icon: 'fas fa-sign-out-alt', text: 'Logout', isLogout: true }
   ];
 
   const tabs = [
@@ -320,19 +293,6 @@ const Settings: React.FC = () => {
     }
   };
 
-  // Handle logout
-  const handleLogout = (e: React.MouseEvent) => {
-  e.preventDefault();
-  if (window.confirm('Are you sure you want to logout?')) {
-    // Clear session data
-    sessionStorage.clear();
-    localStorage.removeItem('currentUser');
-    
-    // Redirect đến login - thay đổi đường dẫn phù hợp với routing của bạn
-    window.location.replace('/login'); // Hoặc đường dẫn login của bạn
-  }
-  };
-
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
@@ -343,96 +303,42 @@ const Settings: React.FC = () => {
   }, [autoSaveTimeout]);
 
   return (
-    <div>
-      {/* Sidebar */}
-      <div className="settings-sidebar">
-        <div className="settings-sidebar-header">
-          <div className="settings-logo">
-            <div className="settings-logo-icon">
-              <i className="fas fa-hotel"></i>
-            </div>
-            <div className="settings-logo-text">HotelLink360</div>
-          </div>
-        </div>
-
-        <div className="settings-property-selector">
-          <div className="settings-property-label">Current Property</div>
-          <div className="settings-property-name">Tabi Tower Hotel</div>
-        </div>
-
-        <nav className="settings-nav-menu">
-          <div className="settings-nav-section">
-            <div className="settings-nav-section-title">Main</div>
-            {navItems.map((item, index) => (
-              <a 
-                key={index}
-                href={item.href} 
-                className={`settings-nav-item ${item.isActive ? 'active' : ''}`}
-              >
-                <i className={item.icon}></i>
-                {item.text}
-              </a>
-            ))}
-          </div>
-
-          <div className="settings-nav-section">
-            <div className="settings-nav-section-title">Content</div>
-            {contentNavItems.map((item, index) => (
-              <a 
-                key={index}
-                href={item.href} 
-                className={`settings-nav-item ${item.isActive ? 'active' : ''}`}
-              >
-                <i className={item.icon}></i>
-                {item.text}
-              </a>
-            ))}
-          </div>
-
-          <div className="settings-nav-section">
-            <div className="settings-nav-section-title">Management</div>
-            {managementNavItems.map((item, index) => (
-              <a 
-                key={index}
-                href={item.href} 
-                className={`settings-nav-item ${item.isActive ? 'active' : ''} ${item.isLogout ? 'logout' : ''}`}
-                onClick={item.isLogout ? handleLogout : undefined}
-              >
-                <i className={item.icon}></i>
-                {item.text}
-              </a>
-            ))}
-          </div>
-        </nav>
-      </div>
-
-
+    <div className="text-slate-800 bg-slate-50 min-h-screen">
       {/* Success Message */}
       {showSuccessMessage && (
-        <div className="settings-success-message">
+        <div className="fixed top-5 right-5 z-[1000] flex items-center gap-2 rounded-lg border border-green-200 bg-green-100 p-3 text-green-800">
           <i className="fas fa-check-circle"></i>
           {successMessage}
         </div>
       )}
 
       {/* Main Content */}
-      <main className="settings-main-content">
-        <div className="settings-header">
+      <main className="p-6">
+        <div className="mb-6 flex items-center justify-between">
           <div>
-            <h2 className="settings-title">Property Settings</h2>
-            <p className="settings-subtitle">Configure your hotel property settings and preferences</p>
+            <h2 className="text-2xl font-bold text-slate-900">Property Settings</h2>
+            <p className="mt-1 text-sm text-slate-500">Configure your hotel property settings and preferences</p>
+          </div>
+          <div className="flex gap-3">
+            <button 
+              className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 flex items-center gap-2"
+              onClick={saveAllSettings}
+            >
+              <i className="fas fa-save"></i>
+              Save All
+            </button>
           </div>
         </div>
         
         {/* Settings Tabs */}
-        <div className="settings-tabs">
+        <div className="mb-6 flex gap-1 overflow-x-auto rounded-xl border border-slate-200 bg-white p-1">
           {tabs.map((tab) => (
             <button 
               key={tab.id}
-              className={`settings-tab ${activeTab === tab.id ? 'active' : ''}`}
+              className={`flex-shrink-0 rounded-lg px-5 py-3 text-sm font-medium transition-all ${activeTab === tab.id ? 'bg-blue-600 text-white' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'}`}
               onClick={() => setActiveTab(tab.id)}
             >
-              <i className={tab.icon}></i>
+              <i className={`${tab.icon} mr-2`}></i>
               {tab.text}
             </button>
           ))}
@@ -440,78 +346,76 @@ const Settings: React.FC = () => {
 
         {/* General Settings */}
         {activeTab === 'general' && (
-          <div className="settings-tab-content active">
-            <div className="settings-grid">
-              <div className="settings-card">
-                <div className="settings-card-header">
-                  <div className="settings-card-title">
-                    <div className="settings-card-icon" style={{background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)'}}>
-                      <i className="fas fa-hotel"></i>
-                    </div>
-                    Basic Information
+          <div className="grid gap-6">
+            <div className="rounded-xl border border-slate-200 bg-white p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3 text-lg font-semibold text-slate-900">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 text-white">
+                    <i className="fas fa-hotel"></i>
                   </div>
+                  Basic Information
                 </div>
-                <div className="settings-card-description">
-                  Configure basic property information and display settings.
-                </div>
+              </div>
+              <p className="mb-5 text-sm text-slate-500">
+                Configure basic property information and display settings.
+              </p>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Property Name</label>
-                  <input 
-                    type="text" 
-                    className="settings-form-input" 
-                    value={generalSettings.propertyName}
-                    onChange={(e) => {
-                      setGeneralSettings(prev => ({ ...prev, propertyName: e.target.value }));
-                      handleAutoSave('propertyName', e.target.value);
-                    }}
-                  />
-                </div>
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Property Name</label>
+                <input 
+                  type="text" 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
+                  value={generalSettings.propertyName}
+                  onChange={(e) => {
+                    setGeneralSettings(prev => ({ ...prev, propertyName: e.target.value }));
+                    handleAutoSave('propertyName', e.target.value);
+                  }}
+                />
+              </div>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Property Code</label>
-                  <input 
-                    type="text" 
-                    className="settings-form-input" 
-                    value={generalSettings.propertyCode}
-                    onChange={(e) => {
-                      setGeneralSettings(prev => ({ ...prev, propertyCode: e.target.value }));
-                      handleAutoSave('propertyCode', e.target.value);
-                    }}
-                  />
-                </div>
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Property Code</label>
+                <input 
+                  type="text" 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
+                  value={generalSettings.propertyCode}
+                  onChange={(e) => {
+                    setGeneralSettings(prev => ({ ...prev, propertyCode: e.target.value }));
+                    handleAutoSave('propertyCode', e.target.value);
+                  }}
+                />
+              </div>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Slogan</label>
-                  <input 
-                    type="text" 
-                    className="settings-form-input" 
-                    placeholder="Your hotel's tagline"
-                    value={generalSettings.propertySlogan}
-                    onChange={(e) => {
-                      setGeneralSettings(prev => ({ ...prev, propertySlogan: e.target.value }));
-                      handleAutoSave('propertySlogan', e.target.value);
-                    }}
-                  />
-                </div>
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Slogan</label>
+                <input 
+                  type="text" 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
+                  placeholder="Your hotel's tagline"
+                  value={generalSettings.propertySlogan}
+                  onChange={(e) => {
+                    setGeneralSettings(prev => ({ ...prev, propertySlogan: e.target.value }));
+                    handleAutoSave('propertySlogan', e.target.value);
+                  }}
+                />
+              </div>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Description</label>
-                  <textarea 
-                    className="settings-form-input settings-form-textarea" 
-                    placeholder="Brief description of your property"
-                    value={generalSettings.propertyDescription}
-                    onChange={(e) => {
-                      setGeneralSettings(prev => ({ ...prev, propertyDescription: e.target.value }));
-                      handleAutoSave('propertyDescription', e.target.value);
-                    }}
-                  />
-                </div>
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Description</label>
+                <textarea 
+                  className="w-full min-h-[100px] resize-y rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
+                  placeholder="Brief description of your property"
+                  value={generalSettings.propertyDescription}
+                  onChange={(e) => {
+                    setGeneralSettings(prev => ({ ...prev, propertyDescription: e.target.value }));
+                    handleAutoSave('propertyDescription', e.target.value);
+                  }}
+                />
+              </div>
 
-                <div className="settings-actions">
-                  <button className="settings-btn-secondary" onClick={() => resetSettings('general')}>Reset</button>
-                  <button className="settings-btn-primary" onClick={() => showSuccess('General settings saved!')}>Save</button>
-                </div>
+              <div className="flex justify-end gap-3 border-t border-slate-200 pt-5 mt-6">
+                <button className="rounded-lg border border-slate-200 bg-slate-50 px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100" onClick={() => resetSettings('general')}>Reset</button>
+                <button className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700" onClick={() => showSuccess('General settings saved!')}>Save</button>
               </div>
             </div>
           </div>
@@ -519,125 +423,125 @@ const Settings: React.FC = () => {
 
         {/* Branding Settings */}
         {activeTab === 'branding' && (
-          <div className="settings-tab-content active">
-            <div className="settings-grid">
-              <div className="settings-card">
-                <div className="settings-card-header">
-                  <div className="settings-card-title">
-                    <div className="settings-card-icon" style={{background: 'linear-gradient(135deg, #f59e0b, #d97706)'}}>
-                      <i className="fas fa-palette"></i>
-                    </div>
-                    Brand Colors
+          <div className="grid gap-6">
+            <div className="rounded-xl border border-slate-200 bg-white p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3 text-lg font-semibold text-slate-900">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 text-white">
+                    <i className="fas fa-palette"></i>
+                  </div>
+                  Brand Colors
+                </div>
+              </div>
+              <p className="mb-5 text-sm text-slate-500">
+                Customize your brand colors that will be used throughout your property pages.
+              </p>
+
+              <div className="flex flex-wrap gap-4">
+                <div className="flex-1 min-w-[200px]">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">Primary Color</label>
+                  <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2">
+                    <input 
+                      type="color" 
+                      className="h-6 w-6 cursor-pointer rounded border-none"
+                      value={brandingSettings.primaryColor}
+                      onChange={(e) => handleColorChange('primary', e.target.value)}
+                    />
+                    <div className="flex-1 font-mono text-xs text-slate-500">{brandingSettings.primaryColor}</div>
                   </div>
                 </div>
-                <div className="settings-card-description">
-                  Customize your brand colors that will be used throughout your property pages.
-                </div>
-
-                <div className="settings-color-picker-group">
-                  <div className="settings-color-input-wrapper">
-                    <label className="settings-form-label">Primary Color</label>
-                    <div className="settings-color-input">
-                      <input 
-                        type="color" 
-                        value={brandingSettings.primaryColor}
-                        onChange={(e) => handleColorChange('primary', e.target.value)}
-                      />
-                      <div className="settings-color-value">{brandingSettings.primaryColor}</div>
-                    </div>
+                <div className="flex-1 min-w-[200px]">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">Secondary Color</label>
+                  <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2">
+                    <input 
+                      type="color" 
+                      className="h-6 w-6 cursor-pointer rounded border-none"
+                      value={brandingSettings.secondaryColor}
+                      onChange={(e) => handleColorChange('secondary', e.target.value)}
+                    />
+                    <div className="flex-1 font-mono text-xs text-slate-500">{brandingSettings.secondaryColor}</div>
                   </div>
-                  <div className="settings-color-input-wrapper">
-                    <label className="settings-form-label">Secondary Color</label>
-                    <div className="settings-color-input">
-                      <input 
-                        type="color" 
-                        value={brandingSettings.secondaryColor}
-                        onChange={(e) => handleColorChange('secondary', e.target.value)}
-                      />
-                      <div className="settings-color-value">{brandingSettings.secondaryColor}</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Logo URL</label>
-                  <input 
-                    type="url" 
-                    className="settings-form-input" 
-                    placeholder="https://example.com/logo.png"
-                    value={brandingSettings.logoUrl}
-                    onChange={(e) => {
-                      setBrandingSettings(prev => ({ ...prev, logoUrl: e.target.value }));
-                      handleAutoSave('logoUrl', e.target.value);
-                    }}
-                  />
-                </div>
-
-                <div className="settings-actions">
-                  <button className="settings-btn-secondary" onClick={() => resetSettings('branding')}>Reset</button>
-                  <button className="settings-btn-primary" onClick={() => showSuccess('Brand settings saved!')}>Save</button>
                 </div>
               </div>
 
-              <div className="settings-card">
-                <div className="settings-card-header">
-                  <div className="settings-card-title">
-                    <div className="settings-card-icon" style={{background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)'}}>
-                      <i className="fas fa-copyright"></i>
-                    </div>
-                    Legal & Footer
+              <div className="mt-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Logo URL</label>
+                <input 
+                  type="url" 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
+                  placeholder="https://example.com/logo.png"
+                  value={brandingSettings.logoUrl}
+                  onChange={(e) => {
+                    setBrandingSettings(prev => ({ ...prev, logoUrl: e.target.value }));
+                    handleAutoSave('logoUrl', e.target.value);
+                  }}
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 border-t border-slate-200 pt-5 mt-6">
+                <button className="rounded-lg border border-slate-200 bg-slate-50 px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100" onClick={() => resetSettings('branding')}>Reset</button>
+                <button className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700" onClick={() => showSuccess('Brand settings saved!')}>Save</button>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-slate-200 bg-white p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3 text-lg font-semibold text-slate-900">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+                    <i className="fas fa-copyright"></i>
                   </div>
+                  Legal & Footer
                 </div>
-                <div className="settings-card-description">
-                  Configure copyright text and legal links for your property pages.
-                </div>
+              </div>
+              <p className="mb-5 text-sm text-slate-500">
+                Configure copyright text and legal links for your property pages.
+              </p>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Copyright Text</label>
-                  <input 
-                    type="text" 
-                    className="settings-form-input" 
-                    placeholder="© 2024 Your Hotel Name"
-                    value={brandingSettings.copyrightText}
-                    onChange={(e) => {
-                      setBrandingSettings(prev => ({ ...prev, copyrightText: e.target.value }));
-                      handleAutoSave('copyrightText', e.target.value);
-                    }}
-                  />
-                </div>
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Copyright Text</label>
+                <input 
+                  type="text" 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
+                  placeholder="© 2024 Your Hotel Name"
+                  value={brandingSettings.copyrightText}
+                  onChange={(e) => {
+                    setBrandingSettings(prev => ({ ...prev, copyrightText: e.target.value }));
+                    handleAutoSave('copyrightText', e.target.value);
+                  }}
+                />
+              </div>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Terms & Conditions URL</label>
-                  <input 
-                    type="url" 
-                    className="settings-form-input" 
-                    placeholder="https://example.com/terms"
-                    value={brandingSettings.termsUrl}
-                    onChange={(e) => {
-                      setBrandingSettings(prev => ({ ...prev, termsUrl: e.target.value }));
-                      handleAutoSave('termsUrl', e.target.value);
-                    }}
-                  />
-                </div>
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Terms & Conditions URL</label>
+                <input 
+                  type="url" 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
+                  placeholder="https://example.com/terms"
+                  value={brandingSettings.termsUrl}
+                  onChange={(e) => {
+                    setBrandingSettings(prev => ({ ...prev, termsUrl: e.target.value }));
+                    handleAutoSave('termsUrl', e.target.value);
+                  }}
+                />
+              </div>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Privacy Policy URL</label>
-                  <input 
-                    type="url" 
-                    className="settings-form-input" 
-                    placeholder="https://example.com/privacy"
-                    value={brandingSettings.privacyUrl}
-                    onChange={(e) => {
-                      setBrandingSettings(prev => ({ ...prev, privacyUrl: e.target.value }));
-                      handleAutoSave('privacyUrl', e.target.value);
-                    }}
-                  />
-                </div>
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Privacy Policy URL</label>
+                <input 
+                  type="url" 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
+                  placeholder="https://example.com/privacy"
+                  value={brandingSettings.privacyUrl}
+                  onChange={(e) => {
+                    setBrandingSettings(prev => ({ ...prev, privacyUrl: e.target.value }));
+                    handleAutoSave('privacyUrl', e.target.value);
+                  }}
+                />
+              </div>
 
-                <div className="settings-actions">
-                  <button className="settings-btn-secondary" onClick={() => resetSettings('branding')}>Reset</button>
-                  <button className="settings-btn-primary" onClick={() => showSuccess('Legal settings saved!')}>Save</button>
-                </div>
+              <div className="flex justify-end gap-3 border-t border-slate-200 pt-5 mt-6">
+                <button className="rounded-lg border border-slate-200 bg-slate-50 px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100" onClick={() => resetSettings('branding')}>Reset</button>
+                <button className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700" onClick={() => showSuccess('Legal settings saved!')}>Save</button>
               </div>
             </div>
           </div>
@@ -645,134 +549,132 @@ const Settings: React.FC = () => {
 
         {/* Localization Settings */}
         {activeTab === 'localization' && (
-          <div className="settings-tab-content active">
-            <div className="settings-grid">
-              <div className="settings-card">
-                <div className="settings-card-header">
-                  <div className="settings-card-title">
-                    <div className="settings-card-icon" style={{background: 'linear-gradient(135deg, #10b981, #059669)'}}>
-                      <i className="fas fa-globe"></i>
-                    </div>
-                    Language Settings
+          <div className="grid gap-6">
+            <div className="rounded-xl border border-slate-200 bg-white p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3 text-lg font-semibold text-slate-900">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-green-500 to-green-600 text-white">
+                    <i className="fas fa-globe"></i>
                   </div>
+                  Language Settings
                 </div>
-                <div className="settings-card-description">
-                  Configure supported languages for your property. Select languages you want to provide content in.
-                </div>
+              </div>
+              <p className="mb-5 text-sm text-slate-500">
+                Configure supported languages for your property. Select languages you want to provide content in.
+              </p>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Default Language</label>
-                  <select 
-                    className="settings-form-select"
-                    value={localizationSettings.defaultLanguage}
-                    onChange={(e) => {
-                      setLocalizationSettings(prev => ({ ...prev, defaultLanguage: e.target.value }));
-                      handleAutoSave('defaultLanguage', e.target.value);
-                    }}
-                  >
-                    <option value="en">English</option>
-                    <option value="vi">Tiếng Việt</option>
-                    <option value="ja">日本語</option>
-                    <option value="ko">한국어</option>
-                  </select>
-                </div>
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Default Language</label>
+                <select 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm"
+                  value={localizationSettings.defaultLanguage}
+                  onChange={(e) => {
+                    setLocalizationSettings(prev => ({ ...prev, defaultLanguage: e.target.value }));
+                    handleAutoSave('defaultLanguage', e.target.value);
+                  }}
+                >
+                  <option value="en">English</option>
+                  <option value="vi">Tiếng Việt</option>
+                  <option value="ja">日本語</option>
+                  <option value="ko">한국어</option>
+                </select>
+              </div>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Fallback Language</label>
-                  <select 
-                    className="settings-form-select"
-                    value={localizationSettings.fallbackLanguage}
-                    onChange={(e) => {
-                      setLocalizationSettings(prev => ({ ...prev, fallbackLanguage: e.target.value }));
-                      handleAutoSave('fallbackLanguage', e.target.value);
-                    }}
-                  >
-                    <option value="en">English</option>
-                    <option value="vi">Tiếng Việt</option>
-                    <option value="ja">日本語</option>
-                    <option value="ko">한국어</option>
-                  </select>
-                </div>
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Fallback Language</label>
+                <select 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm"
+                  value={localizationSettings.fallbackLanguage}
+                  onChange={(e) => {
+                    setLocalizationSettings(prev => ({ ...prev, fallbackLanguage: e.target.value }));
+                    handleAutoSave('fallbackLanguage', e.target.value);
+                  }}
+                >
+                  <option value="en">English</option>
+                  <option value="vi">Tiếng Việt</option>
+                  <option value="ja">日本語</option>
+                  <option value="ko">한국어</option>
+                </select>
+              </div>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Supported Languages</label>
-                  <div className="settings-language-grid">
-                    {languages.map((language) => (
-                      <div 
-                        key={language.code}
-                        className={`settings-language-option ${localizationSettings.supportedLanguages.includes(language.code) ? 'active' : ''}`}
-                        onClick={() => handleLanguageToggle(language.code)}
-                      >
-                        <div className="settings-language-info">
-                          <div className="settings-language-flag">{language.flag}</div>
-                          <div className="settings-language-details">
-                            <h4>{language.name}</h4>
-                            <div className="settings-language-native">{language.native}</div>
-                          </div>
-                        </div>
-                        <div className="settings-language-checkbox">
-                          <i className="fas fa-check"></i>
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Supported Languages</label>
+                <div className="mt-4 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
+                  {languages.map((language) => (
+                    <div 
+                      key={language.code}
+                      className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-all ${localizationSettings.supportedLanguages.includes(language.code) ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-blue-500 hover:bg-slate-50'}`}
+                      onClick={() => handleLanguageToggle(language.code)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-5 w-6 items-center justify-center rounded-sm bg-slate-200 text-xs">{language.flag}</div>
+                        <div>
+                          <h4 className="text-sm font-medium text-slate-900">{language.name}</h4>
+                          <div className="text-xs text-slate-500">{language.native}</div>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="settings-actions">
-                  <button className="settings-btn-secondary" onClick={() => resetSettings('localization')}>Reset</button>
-                  <button className="settings-btn-primary" onClick={() => showSuccess('Language settings saved!')}>Save</button>
+                      <div className={`flex h-4 w-4 items-center justify-center rounded-sm border-2 transition-all ${localizationSettings.supportedLanguages.includes(language.code) ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-300 text-transparent'}`}>
+                        <i className="fas fa-check text-xs"></i>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              <div className="settings-card">
-                <div className="settings-card-header">
-                  <div className="settings-card-title">
-                    <div className="settings-card-icon" style={{background: 'linear-gradient(135deg, #ef4444, #dc2626)'}}>
-                      <i className="fas fa-clock"></i>
-                    </div>
-                    Regional Settings
+              <div className="flex justify-end gap-3 border-t border-slate-200 pt-5 mt-6">
+                <button className="rounded-lg border border-slate-200 bg-slate-50 px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100" onClick={() => resetSettings('localization')}>Reset</button>
+                <button className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700" onClick={() => showSuccess('Language settings saved!')}>Save</button>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-slate-200 bg-white p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3 text-lg font-semibold text-slate-900">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-red-500 to-red-600 text-white">
+                    <i className="fas fa-clock"></i>
                   </div>
+                  Regional Settings
                 </div>
-                <div className="settings-card-description">
-                  Configure timezone and regional display preferences for your property.
-                </div>
+              </div>
+              <p className="mb-5 text-sm text-slate-500">
+                Configure timezone and regional display preferences for your property.
+              </p>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Timezone</label>
-                  <select 
-                    className="settings-form-select"
-                    value={localizationSettings.timezone}
-                    onChange={(e) => {
-                      setLocalizationSettings(prev => ({ ...prev, timezone: e.target.value }));
-                      handleAutoSave('timezone', e.target.value);
-                    }}
-                  >
-                    {timezoneOptions.map((option) => (
-                      <option key={option.value} value={option.value}>{option.label}</option>
-                    ))}
-                  </select>
-                </div>
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Timezone</label>
+                <select 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm"
+                  value={localizationSettings.timezone}
+                  onChange={(e) => {
+                    setLocalizationSettings(prev => ({ ...prev, timezone: e.target.value }));
+                    handleAutoSave('timezone', e.target.value);
+                  }}
+                >
+                  {timezoneOptions.map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
+                </select>
+              </div>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Date Format</label>
-                  <select 
-                    className="settings-form-select"
-                    value={localizationSettings.dateFormat}
-                    onChange={(e) => {
-                      setLocalizationSettings(prev => ({ ...prev, dateFormat: e.target.value }));
-                      handleAutoSave('dateFormat', e.target.value);
-                    }}
-                  >
-                    {dateFormatOptions.map((option) => (
-                      <option key={option.value} value={option.value}>{option.label}</option>
-                    ))}
-                  </select>
-                </div>
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Date Format</label>
+                <select 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm"
+                  value={localizationSettings.dateFormat}
+                  onChange={(e) => {
+                    setLocalizationSettings(prev => ({ ...prev, dateFormat: e.target.value }));
+                    handleAutoSave('dateFormat', e.target.value);
+                  }}
+                >
+                  {dateFormatOptions.map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
+                </select>
+              </div>
 
-                <div className="settings-actions">
-                  <button className="settings-btn-secondary" onClick={() => resetSettings('localization')}>Reset</button>
-                  <button className="settings-btn-primary" onClick={() => showSuccess('Regional settings saved!')}>Save</button>
-                </div>
+              <div className="flex justify-end gap-3 border-t border-slate-200 pt-5 mt-6">
+                <button className="rounded-lg border border-slate-200 bg-slate-50 px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100" onClick={() => resetSettings('localization')}>Reset</button>
+                <button className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700" onClick={() => showSuccess('Regional settings saved!')}>Save</button>
               </div>
             </div>
           </div>
@@ -780,155 +682,155 @@ const Settings: React.FC = () => {
 
         {/* Contact Info Settings */}
         {activeTab === 'contact' && (
-          <div className="settings-tab-content active">
-            <div className="settings-grid">
-              <div className="settings-card">
-                <div className="settings-card-header">
-                  <div className="settings-card-title">
-                    <div className="settings-card-icon" style={{background: 'linear-gradient(135deg, #06b6d4, #0891b2)'}}>
-                      <i className="fas fa-map-marker-alt"></i>
-                    </div>
-                    Address & Location
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="rounded-xl border border-slate-200 bg-white p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3 text-lg font-semibold text-slate-900">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 text-white">
+                    <i className="fas fa-map-marker-alt"></i>
                   </div>
+                  Address & Location
                 </div>
-                <div className="settings-card-description">
-                  Configure your property's physical address and location information.
-                </div>
+              </div>
+              <p className="mb-5 text-sm text-slate-500">
+                Configure your property's physical address and location information.
+              </p>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Street Address</label>
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Street Address</label>
+                <input 
+                  type="text" 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  value={contactSettings.address}
+                  onChange={(e) => {
+                    setContactSettings(prev => ({ ...prev, address: e.target.value }));
+                    handleAutoSave('address', e.target.value);
+                  }}
+                />
+              </div>
+
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">District</label>
+                <input 
+                  type="text" 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  value={contactSettings.district}
+                  onChange={(e) => {
+                    setContactSettings(prev => ({ ...prev, district: e.target.value }));
+                    handleAutoSave('district', e.target.value);
+                  }}
+                />
+              </div>
+
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">City</label>
+                <input 
+                  type="text" 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  value={contactSettings.city}
+                  onChange={(e) => {
+                    setContactSettings(prev => ({ ...prev, city: e.target.value }));
+                    handleAutoSave('city', e.target.value);
+                  }}
+                />
+              </div>
+
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Country</label>
+                <input 
+                  type="text" 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  value={contactSettings.country}
+                  onChange={(e) => {
+                    setContactSettings(prev => ({ ...prev, country: e.target.value }));
+                    handleAutoSave('country', e.target.value);
+                  }}
+                />
+              </div>
+
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Postal Code</label>
+                <input 
+                  type="text" 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  value={contactSettings.postalCode}
+                  onChange={(e) => {
+                    setContactSettings(prev => ({ ...prev, postalCode: e.target.value }));
+                    handleAutoSave('postalCode', e.target.value);
+                  }}
+                />
+              </div>
+
+              <div className="flex flex-wrap gap-4">
+                <div className="flex-1 min-w-[200px]">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">Latitude</label>
                   <input 
-                    type="text" 
-                    className="settings-form-input"
-                    value={contactSettings.address}
+                    type="number" 
+                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
+                    placeholder="35.6532" 
+                    step="0.0001"
+                    value={contactSettings.latitude}
                     onChange={(e) => {
-                      setContactSettings(prev => ({ ...prev, address: e.target.value }));
-                      handleAutoSave('address', e.target.value);
+                      setContactSettings(prev => ({ ...prev, latitude: e.target.value }));
+                      handleAutoSave('latitude', e.target.value);
                     }}
                   />
                 </div>
-
-                <div className="settings-form-group">
-                  <label className="settings-form-label">District</label>
+                <div className="flex-1 min-w-[200px]">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">Longitude</label>
                   <input 
-                    type="text" 
-                    className="settings-form-input"
-                    value={contactSettings.district}
+                    type="number" 
+                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
+                    placeholder="139.7390" 
+                    step="0.0001"
+                    value={contactSettings.longitude}
                     onChange={(e) => {
-                      setContactSettings(prev => ({ ...prev, district: e.target.value }));
-                      handleAutoSave('district', e.target.value);
+                      setContactSettings(prev => ({ ...prev, longitude: e.target.value }));
+                      handleAutoSave('longitude', e.target.value);
                     }}
                   />
-                </div>
-
-                <div className="settings-form-group">
-                  <label className="settings-form-label">City</label>
-                  <input 
-                    type="text" 
-                    className="settings-form-input"
-                    value={contactSettings.city}
-                    onChange={(e) => {
-                      setContactSettings(prev => ({ ...prev, city: e.target.value }));
-                      handleAutoSave('city', e.target.value);
-                    }}
-                  />
-                </div>
-
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Country</label>
-                  <input 
-                    type="text" 
-                    className="settings-form-input"
-                    value={contactSettings.country}
-                    onChange={(e) => {
-                      setContactSettings(prev => ({ ...prev, country: e.target.value }));
-                      handleAutoSave('country', e.target.value);
-                    }}
-                  />
-                </div>
-
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Postal Code</label>
-                  <input 
-                    type="text" 
-                    className="settings-form-input"
-                    value={contactSettings.postalCode}
-                    onChange={(e) => {
-                      setContactSettings(prev => ({ ...prev, postalCode: e.target.value }));
-                      handleAutoSave('postalCode', e.target.value);
-                    }}
-                  />
-                </div>
-
-                <div className="settings-color-picker-group">
-                  <div className="settings-color-input-wrapper">
-                    <label className="settings-form-label">Latitude</label>
-                    <input 
-                      type="number" 
-                      className="settings-form-input" 
-                      placeholder="35.6532" 
-                      step="0.0001"
-                      value={contactSettings.latitude}
-                      onChange={(e) => {
-                        setContactSettings(prev => ({ ...prev, latitude: e.target.value }));
-                        handleAutoSave('latitude', e.target.value);
-                      }}
-                    />
-                  </div>
-                  <div className="settings-color-input-wrapper">
-                    <label className="settings-form-label">Longitude</label>
-                    <input 
-                      type="number" 
-                      className="settings-form-input" 
-                      placeholder="139.7390" 
-                      step="0.0001"
-                      value={contactSettings.longitude}
-                      onChange={(e) => {
-                        setContactSettings(prev => ({ ...prev, longitude: e.target.value }));
-                        handleAutoSave('longitude', e.target.value);
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Google Maps URL</label>
-                  <input 
-                    type="url" 
-                    className="settings-form-input" 
-                    placeholder="https://maps.google.com/..."
-                    value={contactSettings.googleMapUrl}
-                    onChange={(e) => {
-                      setContactSettings(prev => ({ ...prev, googleMapUrl: e.target.value }));
-                      handleAutoSave('googleMapUrl', e.target.value);
-                    }}
-                  />
-                </div>
-
-                <div className="settings-actions">
-                  <button className="settings-btn-secondary" onClick={() => resetSettings('contact')}>Reset</button>
-                  <button className="settings-btn-primary" onClick={() => showSuccess('Location settings saved!')}>Save</button>
                 </div>
               </div>
 
-              <div className="settings-card">
-                <div className="settings-card-header">
-                  <div className="settings-card-title">
-                    <div className="settings-card-icon" style={{background: 'linear-gradient(135deg, #84cc16, #65a30d)'}}>
+              <div className="mt-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Google Maps URL</label>
+                <input 
+                  type="url" 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
+                  placeholder="https://maps.google.com/..."
+                  value={contactSettings.googleMapUrl}
+                  onChange={(e) => {
+                    setContactSettings(prev => ({ ...prev, googleMapUrl: e.target.value }));
+                    handleAutoSave('googleMapUrl', e.target.value);
+                  }}
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 border-t border-slate-200 pt-5 mt-6">
+                <button className="rounded-lg border border-slate-200 bg-slate-50 px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100" onClick={() => resetSettings('contact')}>Reset</button>
+                <button className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700" onClick={() => showSuccess('Location settings saved!')}>Save</button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-6">
+              <div className="rounded-xl border border-slate-200 bg-white p-6">
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3 text-lg font-semibold text-slate-900">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-lime-500 to-lime-600 text-white">
                       <i className="fas fa-phone"></i>
                     </div>
                     Contact Details
                   </div>
                 </div>
-                <div className="settings-card-description">
+                <p className="mb-5 text-sm text-slate-500">
                   Configure contact information and communication channels.
-                </div>
+                </p>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Phone Number</label>
+                <div className="mb-5">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">Phone Number</label>
                   <input 
                     type="tel" 
-                    className="settings-form-input" 
+                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
                     placeholder="+81-3-1234-5678"
                     value={contactSettings.phoneNumber}
                     onChange={(e) => {
@@ -938,11 +840,11 @@ const Settings: React.FC = () => {
                   />
                 </div>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Email Address</label>
+                <div className="mb-5">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">Email Address</label>
                   <input 
                     type="email" 
-                    className="settings-form-input" 
+                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
                     placeholder="info@tabitower.com"
                     value={contactSettings.emailAddress}
                     onChange={(e) => {
@@ -952,11 +854,11 @@ const Settings: React.FC = () => {
                   />
                 </div>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Official Website</label>
+                <div className="mb-5">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">Official Website</label>
                   <input 
                     type="url" 
-                    className="settings-form-input" 
+                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
                     placeholder="https://tabitower.com"
                     value={contactSettings.websiteUrl}
                     onChange={(e) => {
@@ -966,11 +868,11 @@ const Settings: React.FC = () => {
                   />
                 </div>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Zalo OA ID</label>
+                <div className="mb-5">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">Zalo OA ID</label>
                   <input 
                     type="text" 
-                    className="settings-form-input" 
+                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
                     placeholder="zalo_oa_id"
                     value={contactSettings.zaloOaId}
                     onChange={(e) => {
@@ -980,30 +882,30 @@ const Settings: React.FC = () => {
                   />
                 </div>
 
-                <div className="settings-actions">
-                  <button className="settings-btn-secondary" onClick={() => resetSettings('contact')}>Reset</button>
-                  <button className="settings-btn-primary" onClick={() => showSuccess('Contact settings saved!')}>Save</button>
+                <div className="flex justify-end gap-3 border-t border-slate-200 pt-5 mt-6">
+                  <button className="rounded-lg border border-slate-200 bg-slate-50 px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100" onClick={() => resetSettings('contact')}>Reset</button>
+                  <button className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700" onClick={() => showSuccess('Contact settings saved!')}>Save</button>
                 </div>
               </div>
 
-              <div className="settings-card">
-                <div className="settings-card-header">
-                  <div className="settings-card-title">
-                    <div className="settings-card-icon" style={{background: 'linear-gradient(135deg, #f472b6, #ec4899)'}}>
+              <div className="rounded-xl border border-slate-200 bg-white p-6">
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3 text-lg font-semibold text-slate-900">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-pink-500 to-pink-600 text-white">
                       <i className="fas fa-share-alt"></i>
                     </div>
                     Social Media
                   </div>
                 </div>
-                <div className="settings-card-description">
+                <p className="mb-5 text-sm text-slate-500">
                   Configure your social media presence and links.
-                </div>
+                </p>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Facebook URL</label>
+                <div className="mb-5">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">Facebook URL</label>
                   <input 
                     type="url" 
-                    className="settings-form-input" 
+                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
                     placeholder="https://facebook.com/tabitower"
                     value={contactSettings.facebookUrl}
                     onChange={(e) => {
@@ -1013,11 +915,11 @@ const Settings: React.FC = () => {
                   />
                 </div>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Instagram URL</label>
+                <div className="mb-5">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">Instagram URL</label>
                   <input 
                     type="url" 
-                    className="settings-form-input" 
+                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
                     placeholder="https://instagram.com/tabitower"
                     value={contactSettings.instagramUrl}
                     onChange={(e) => {
@@ -1027,11 +929,11 @@ const Settings: React.FC = () => {
                   />
                 </div>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">YouTube URL</label>
+                <div className="mb-5">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">YouTube URL</label>
                   <input 
                     type="url" 
-                    className="settings-form-input" 
+                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
                     placeholder="https://youtube.com/c/tabitower"
                     value={contactSettings.youtubeUrl}
                     onChange={(e) => {
@@ -1041,11 +943,11 @@ const Settings: React.FC = () => {
                   />
                 </div>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">TikTok URL</label>
+                <div className="mb-5">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">TikTok URL</label>
                   <input 
                     type="url" 
-                    className="settings-form-input" 
+                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
                     placeholder="https://tiktok.com/@tabitower"
                     value={contactSettings.tiktokUrl}
                     onChange={(e) => {
@@ -1055,9 +957,9 @@ const Settings: React.FC = () => {
                   />
                 </div>
 
-                <div className="settings-actions">
-                  <button className="settings-btn-secondary" onClick={() => resetSettings('contact')}>Reset</button>
-                  <button className="settings-btn-primary" onClick={() => showSuccess('Social media settings saved!')}>Save</button>
+                <div className="flex justify-end gap-3 border-t border-slate-200 pt-5 mt-6">
+                  <button className="rounded-lg border border-slate-200 bg-slate-50 px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100" onClick={() => resetSettings('contact')}>Reset</button>
+                  <button className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700" onClick={() => showSuccess('Social media settings saved!')}>Save</button>
                 </div>
               </div>
             </div>
@@ -1066,149 +968,149 @@ const Settings: React.FC = () => {
 
         {/* Advanced Settings */}
         {activeTab === 'advanced' && (
-          <div className="settings-tab-content active">
-            <div className="settings-grid">
-              <div className="settings-card">
-                <div className="settings-card-header">
-                  <div className="settings-card-title">
-                    <div className="settings-card-icon" style={{background: 'linear-gradient(135deg, #6366f1, #4f46e5)'}}>
-                      <i className="fas fa-code"></i>
-                    </div>
-                    Advanced Features
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="rounded-xl border border-slate-200 bg-white p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3 text-lg font-semibold text-slate-900">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-indigo-500 to-indigo-600 text-white">
+                    <i className="fas fa-code"></i>
+                  </div>
+                  Advanced Features
+                </div>
+              </div>
+              <p className="mb-5 text-sm text-slate-500">
+                Configure advanced features and integrations for your property.
+              </p>
+
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Intro Video URL</label>
+                <input 
+                  type="url" 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
+                  placeholder="https://youtube.com/watch?v=..."
+                  value={advancedSettings.introVideoUrl}
+                  onChange={(e) => {
+                    setAdvancedSettings(prev => ({ ...prev, introVideoUrl: e.target.value }));
+                    handleAutoSave('introVideoUrl', e.target.value);
+                  }}
+                />
+              </div>
+
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">360° Virtual Tour URL</label>
+                <input 
+                  type="url" 
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
+                  placeholder="https://example.com/360tour"
+                  value={advancedSettings.vr360Url}
+                  onChange={(e) => {
+                    setAdvancedSettings(prev => ({ ...prev, vr360Url: e.target.value }));
+                    handleAutoSave('vr360Url', e.target.value);
+                  }}
+                />
+              </div>
+
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Banner Images (JSON)</label>
+                <textarea 
+                  className="w-full min-h-[100px] resize-y rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" 
+                  placeholder='["image1.jpg", "image2.jpg"]'
+                  value={advancedSettings.bannerImages}
+                  onChange={(e) => {
+                    setAdvancedSettings(prev => ({ ...prev, bannerImages: e.target.value }));
+                    handleAutoSave('bannerImages', e.target.value);
+                  }}
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 border-t border-slate-200 pt-5 mt-6">
+                <button 
+                  className="rounded-lg border border-slate-200 bg-slate-50 px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100" 
+                  onClick={() => resetSettings('advanced')}
+                >
+                  Reset
+                </button>
+                <button 
+                  className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700" 
+                  onClick={() => showSuccess('Advanced settings saved!')}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+
+            {/* Feature Toggles */}
+            <div className="rounded-xl border border-slate-200 bg-white p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3 text-lg font-semibold text-slate-900">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-gray-500 to-gray-600 text-white">
+                    <i className="fas fa-database"></i>
+                  </div>
+                  System Settings
+                </div>
+              </div>
+              <p className="mb-5 text-sm text-slate-500">
+                Configure system-level settings and preferences.
+              </p>
+
+              <div className="space-y-4">
+                <div className="flex items-start justify-between gap-4 py-1">
+                  <div className="flex-1">
+                    <h4 className="text-sm font-medium text-slate-900 mb-1 leading-snug">Auto Language Detection</h4>
+                    <p className="text-xs text-slate-500 leading-snug">Automatically detect visitor's preferred language</p>
+                  </div>
+                  <div 
+                    className={`relative inline-block w-12 h-7 rounded-full cursor-pointer transition-colors ${advancedSettings.autoLanguageDetection ? 'bg-blue-600' : 'bg-slate-200'}`}
+                    onClick={() => handleToggle('autoLanguageDetection')}
+                  >
+                    <span className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform shadow-sm ${advancedSettings.autoLanguageDetection ? 'transform translate-x-5' : ''}`}></span>
                   </div>
                 </div>
-                <div className="settings-card-description">
-                  Configure advanced features and integrations for your property.
-                </div>
 
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Intro Video URL</label>
-                  <input 
-                    type="url" 
-                    className="settings-form-input" 
-                    placeholder="https://youtube.com/watch?v=..."
-                    value={advancedSettings.introVideoUrl}
-                    onChange={(e) => {
-                      setAdvancedSettings(prev => ({ ...prev, introVideoUrl: e.target.value }));
-                      handleAutoSave('introVideoUrl', e.target.value);
-                    }}
-                  />
-                </div>
-
-                <div className="settings-form-group">
-                  <label className="settings-form-label">360° Virtual Tour URL</label>
-                  <input 
-                    type="url" 
-                    className="settings-form-input" 
-                    placeholder="https://example.com/360tour"
-                    value={advancedSettings.vr360Url}
-                    onChange={(e) => {
-                      setAdvancedSettings(prev => ({ ...prev, vr360Url: e.target.value }));
-                      handleAutoSave('vr360Url', e.target.value);
-                    }}
-                  />
-                </div>
-
-                <div className="settings-form-group">
-                  <label className="settings-form-label">Banner Images (JSON)</label>
-                  <textarea 
-                    className="settings-form-input settings-form-textarea" 
-                    placeholder='["image1.jpg", "image2.jpg"]'
-                    value={advancedSettings.bannerImages}
-                    onChange={(e) => {
-                      setAdvancedSettings(prev => ({ ...prev, bannerImages: e.target.value }));
-                      handleAutoSave('bannerImages', e.target.value);
-                    }}
-                  />
-                </div>
-
-                <div className="settings-actions">
-                                    <button 
-                    className="settings-btn-secondary" 
-                    onClick={() => resetSettings('advanced')}
+                <div className="flex items-start justify-between gap-4 py-1">
+                  <div className="flex-1">
+                    <h4 className="text-sm font-medium text-slate-900 mb-1 leading-snug">Analytics Tracking</h4>
+                    <p className="text-xs text-slate-500 leading-snug">Enable visitor analytics and tracking</p>
+                  </div>
+                  <div 
+                    className={`relative inline-block w-12 h-7 rounded-full cursor-pointer transition-colors ${advancedSettings.analyticsTracking ? 'bg-blue-600' : 'bg-slate-200'}`}
+                    onClick={() => handleToggle('analyticsTracking')}
                   >
-                    Reset
-                  </button>
-                  <button 
-                    className="settings-btn-primary" 
-                    onClick={() => showSuccess('Advanced settings saved!')}
+                    <span className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform shadow-sm ${advancedSettings.analyticsTracking ? 'transform translate-x-5' : ''}`}></span>
+                  </div>
+                </div>
+
+                <div className="flex items-start justify-between gap-4 py-1">
+                  <div className="flex-1">
+                    <h4 className="text-sm font-medium text-slate-900 mb-1 leading-snug">Cache System</h4>
+                    <p className="text-xs text-slate-500 leading-snug">Enable content caching for better performance</p>
+                  </div>
+                  <div 
+                    className={`relative inline-block w-12 h-7 rounded-full cursor-pointer transition-colors ${advancedSettings.cacheSystem ? 'bg-blue-600' : 'bg-slate-200'}`}
+                    onClick={() => handleToggle('cacheSystem')}
                   >
-                    Save
-                  </button>
+                    <span className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform shadow-sm ${advancedSettings.cacheSystem ? 'transform translate-x-5' : ''}`}></span>
+                  </div>
+                </div>
+
+                <div className="flex items-start justify-between gap-4 py-1">
+                  <div className="flex-1">
+                    <h4 className="text-sm font-medium text-slate-900 mb-1 leading-snug">Property Active</h4>
+                    <p className="text-xs text-slate-500 leading-snug">Enable/disable this property entirely</p>
+                  </div>
+                  <div 
+                    className={`relative inline-block w-12 h-7 rounded-full cursor-pointer transition-colors ${advancedSettings.propertyActive ? 'bg-blue-600' : 'bg-slate-200'}`}
+                    onClick={() => handleToggle('propertyActive')}
+                  >
+                    <span className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform shadow-sm ${advancedSettings.propertyActive ? 'transform translate-x-5' : ''}`}></span>
+                  </div>
                 </div>
               </div>
 
-              {/* Feature Toggles */}
-                <div className="settings-card">
-                  <div className="settings-card-header">
-                    <div className="settings-card-title">
-                      <div className="settings-card-icon" style={{background: 'linear-gradient(135deg, #71717a, #52525b)'}}>
-                        <i className="fas fa-database"></i>
-                      </div>
-                      System Settings
-                    </div>
-                  </div>
-                  <div className="settings-card-description">
-                    Configure system-level settings and preferences.
-                  </div>
-
-                  <div className="settings-form-group">
-                    <div className="settings-toggle-wrapper">
-                      <div className="settings-toggle-info">
-                        <h4>Auto Language Detection</h4>
-                        <div className="settings-toggle-description">Automatically detect visitor's preferred language</div>
-                      </div>
-                      <div 
-                        className={`settings-toggle-switch ${advancedSettings.autoLanguageDetection ? 'active' : ''}`}
-                        onClick={() => handleToggle('autoLanguageDetection')}
-                      ></div>
-                    </div>
-                  </div>
-
-                  <div className="settings-form-group">
-                    <div className="settings-toggle-wrapper">
-                      <div className="settings-toggle-info">
-                        <h4>Analytics Tracking</h4>
-                        <div className="settings-toggle-description">Enable visitor analytics and tracking</div>
-                      </div>
-                      <div 
-                        className={`settings-toggle-switch ${advancedSettings.analyticsTracking ? 'active' : ''}`}
-                        onClick={() => handleToggle('analyticsTracking')}
-                      ></div>
-                    </div>
-                  </div>
-
-                  <div className="settings-form-group">
-                    <div className="settings-toggle-wrapper">
-                      <div className="settings-toggle-info">
-                        <h4>Cache System</h4>
-                        <div className="settings-toggle-description">Enable content caching for better performance</div>
-                      </div>
-                      <div 
-                        className={`settings-toggle-switch ${advancedSettings.cacheSystem ? 'active' : ''}`}
-                        onClick={() => handleToggle('cacheSystem')}
-                      ></div>
-                    </div>
-                  </div>
-
-                  <div className="settings-form-group">
-                    <div className="settings-toggle-wrapper">
-                      <div className="settings-toggle-info">
-                        <h4>Property Active</h4>
-                        <div className="settings-toggle-description">Enable/disable this property entirely</div>
-                      </div>
-                      <div 
-                        className={`settings-toggle-switch ${advancedSettings.propertyActive ? 'active' : ''}`}
-                        onClick={() => handleToggle('propertyActive')}
-                      ></div>
-                    </div>
-                  </div>
-
-                  <div className="settings-actions">
-                    <button className="settings-btn-secondary" onClick={() => resetSettings('advanced')}>Reset</button>
-                    <button className="settings-btn-primary" onClick={() => showSuccess('System settings saved!')}>Save</button>
-                  </div>
-                </div>
+              <div className="flex justify-end gap-3 border-t border-slate-200 pt-5 mt-6">
+                <button className="rounded-lg border border-slate-200 bg-slate-50 px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100" onClick={() => resetSettings('advanced')}>Reset</button>
+                <button className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700" onClick={() => showSuccess('System settings saved!')}>Save</button>
+              </div>
             </div>
           </div>
         )}
@@ -1219,4 +1121,3 @@ const Settings: React.FC = () => {
 
 export default Settings;
 
-                  

@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import '../styles/features.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faPlus, faSignInAlt, faUtensils, faCrown, faFileAlt, faChevronDown, 
+  faCirclePlus, faEdit, faLanguage, faTrash 
+} from '@fortawesome/free-solid-svg-icons';
 import AddFeatureModal from '../components/features/AddFeatureModal';
 import EditPostModal from '../components/features/EditPostModal';
 import TranslateModal from '../components/features/TranslateModal';
@@ -39,7 +43,7 @@ interface FormData {
 }
 
 const Features: React.FC = () => {
-  const [features] = useState<Feature[]>([
+  const [features, setFeatures] = useState<Feature[]>([
     {
       id: 1,
       name: "Check-in Process",
@@ -107,14 +111,15 @@ const Features: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [expandedFeatures, setExpandedFeatures] = useState<Set<number>>(new Set());
+  const [expandedFeatures, setExpandedFeatures] = useState<Set<number>>(new Set([1]));
   
   // Modal states
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [translateModalOpen, setTranslateModalOpen] = useState(false);
-  const [addFeatureModalOpen, setAddFeatureModalOpen] = useState(false);
-  const [currentEditingPost, setCurrentEditingPost] = useState<Post | null>(null);
-  const [currentTranslatingPost, setCurrentTranslatingPost] = useState<Post | null>(null);
+  const [isAddFeatureModalOpen, setIsAddFeatureModalOpen] = useState(false);
+  const [isEditPostModalOpen, setIsEditPostModalOpen] = useState(false);
+  const [isTranslateModalOpen, setIsTranslateModalOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [selectedFeature, setSelectedFeature] = useState<Feature | null>(null);
+  const [activeFeatureId, setActiveFeatureId] = useState<number | null>(1);
 
   // Filter features based on search and filters
   const filteredFeatures = features.filter(feature => {
@@ -136,14 +141,14 @@ const Features: React.FC = () => {
   };
 
   // Post management functions
-  const editPost = (post: Post) => {
-    setCurrentEditingPost(post);
-    setEditModalOpen(true);
+  const handleEditPostClick = (post: Post) => {
+    setSelectedPost(post);
+    setIsEditPostModalOpen(true);
   };
 
-  const translatePost = (post: Post) => {
-    setCurrentTranslatingPost(post);
-    setTranslateModalOpen(true);
+  const handleTranslateClick = (post: Post) => {
+    setSelectedPost(post);
+    setIsTranslateModalOpen(true);
   };
 
   const deletePost = (postId: number) => {
@@ -153,56 +158,66 @@ const Features: React.FC = () => {
   };
 
   const addPost = (featureId: number) => {
-    setCurrentEditingPost(null);
-    setEditModalOpen(true);
+    console.log("Adding post to feature:", featureId);
+    setSelectedPost(null);
+    setIsEditPostModalOpen(true);
   };
 
   // Modal handlers
   const handleSavePost = (postData: any) => {
     console.log('Saving post:', postData);
     alert('Post saved successfully!');
-    setEditModalOpen(false);
+    setIsEditPostModalOpen(false);
   };
 
-  const handleSaveFeature = (featureData: FormData) => {
-    console.log('Creating feature:', featureData);
-    alert('Feature created successfully!');
-    setAddFeatureModalOpen(false);
+  const handleSaveFeature = (formData: FormData) => {
+    console.log('Saving feature:', formData);
+    alert('Feature saved successfully!');
+    setIsAddFeatureModalOpen(false);
   };
 
   const handleTranslate = (translationData: any) => {
-    console.log('Translation data:', translationData);
-    alert('Translation accepted and will be saved as a new post!');
+    console.log('Translated data:', translationData);
+    setIsTranslateModalOpen(false);
   };
 
+  const getIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'fa-sign-in-alt': return faSignInAlt;
+      case 'fa-utensils': return faUtensils;
+      case 'fa-crown': return faCrown;
+      default: return faFileAlt;
+    }
+  }
+
   return (
-    <div className="features-page">
+    <div className="p-6 bg-slate-50 min-h-[calc(100vh-64px)]">
       {/* Header */}
-      <div className="features-header">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="features-title">Hotel Features & Posts</h2>
-          <p className="features-subtitle">Manage features and edit their content directly</p>
+          <h2 className="text-2xl font-bold text-slate-900">Hotel Features & Posts</h2>
+          <p className="text-sm text-slate-600 mt-1">Manage features and edit their content directly</p>
         </div>
         <button
-          className="btn-primary"
-          onClick={() => setAddFeatureModalOpen(true)}
+          className="bg-blue-600 text-white border-none px-5 py-2.5 rounded-lg text-sm font-medium cursor-pointer flex items-center gap-2 transition-colors hover:bg-blue-700"
+          onClick={() => setIsAddFeatureModalOpen(true)}
         >
-          <i className="fas fa-plus"></i>
+          <FontAwesomeIcon icon={faPlus} />
           Add Feature
         </button>
       </div>
 
       {/* Search Bar */}
-      <div className="search-bar">
+      <div className="bg-white rounded-xl p-4 border border-slate-200 mb-6 flex gap-4 items-center">
         <input
           type="text"
-          className="search-input"
+          className="flex-1 px-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-blue-200 focus:border-blue-400"
           placeholder="Search features..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <select
-          className="filter-select"
+          className="px-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-white min-w-[120px]"
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
         >
@@ -213,7 +228,7 @@ const Features: React.FC = () => {
           <option value="activities">Activities</option>
         </select>
         <select
-          className="filter-select"
+          className="px-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-white min-w-[120px]"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
         >
@@ -224,109 +239,97 @@ const Features: React.FC = () => {
       </div>
 
       {/* Features List */}
-      <div className="features-list">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         {filteredFeatures.map(feature => (
-          <div key={feature.id} className="feature-item">
+          <div key={feature.id} className="border-b border-slate-200 last:border-b-0">
             <div
-              className={`feature-header ${expandedFeatures.has(feature.id) ? 'expanded' : ''}`}
+              className={`flex items-center p-4 cursor-pointer transition-all ${expandedFeatures.has(feature.id) ? 'bg-blue-50 border-b border-blue-200' : 'hover:bg-slate-50'}`}
               onClick={() => toggleFeature(feature.id)}
             >
-              <div className="feature-icon" style={{ background: feature.iconColor }}>
-                <i className={`fas ${feature.icon}`}></i>
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg text-white mr-4" style={{ background: feature.iconColor }}>
+                <FontAwesomeIcon icon={getIcon(feature.icon)} />
               </div>
-              <div className="feature-info">
-                <div className="feature-details">
-                  <h3>{feature.name}</h3>
-                  <div className="feature-meta">
-                    <span className="feature-category">{feature.category}</span>
-                    <div className="posts-count">
-                      <i className="fas fa-file-alt"></i>
+              <div className="flex-1 flex items-center gap-4">
+                <div>
+                  <h3 className="text-base font-semibold text-slate-900 mb-1">{feature.name}</h3>
+                  <div className="flex items-center gap-4 text-sm text-slate-600">
+                    <span className="bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full text-xs">{feature.category}</span>
+                    <div className="flex items-center gap-1.5">
+                      <FontAwesomeIcon icon={faFileAlt} />
                       <span>{feature.posts.length} posts</span>
                     </div>
-                    <span className={`status-badge status-${feature.status}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-semibold uppercase ${feature.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                       {feature.status}
                     </span>
                   </div>
                 </div>
               </div>
-              <i className="fas fa-chevron-down expand-icon"></i>
+              <FontAwesomeIcon icon={faChevronDown} className={`text-slate-600 text-base transition-transform ${expandedFeatures.has(feature.id) ? 'rotate-180' : ''}`} />
             </div>
             
-            <div className={`feature-content ${expandedFeatures.has(feature.id) ? 'expanded' : ''}`}>
-              <div className="posts-section">
-                <div className="posts-header">
-                  <h4 className="posts-title">Posts in this Feature</h4>
+            <div className={`bg-slate-50 transition-all duration-300 ease-in-out overflow-hidden ${expandedFeatures.has(feature.id) ? 'max-h-[1000px]' : 'max-h-0'}`}>
+              <div className="p-5">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="text-base font-semibold text-slate-900">Posts in this Feature</h4>
                   <button
-                    className="add-post-btn"
+                    className="bg-green-600 text-white border-none px-4 py-2 rounded-md text-xs font-medium cursor-pointer flex items-center gap-1.5 transition-colors hover:bg-green-700"
                     onClick={(e) => {
                       e.stopPropagation();
                       addPost(feature.id);
                     }}
                   >
-                    <i className="fas fa-plus"></i>
+                    <FontAwesomeIcon icon={faPlus} />
                     Add Post
                   </button>
                 </div>
                 
                 {feature.posts.length === 0 ? (
-                  <div className="empty-posts">
-                    <div className="empty-icon">
-                      <i className="fas fa-file-plus"></i>
+                  <div className="text-center py-10 text-slate-500">
+                    <div className="text-5xl text-slate-300 mb-4">
+                      <FontAwesomeIcon icon={faCirclePlus} />
                     </div>
                     <p>No posts created yet for this feature.</p>
                     <p>Click "Add Post" to create the first post.</p>
                   </div>
                 ) : (
-                  <div className="posts-list">
+                  <div className="flex flex-col gap-3">
                     {feature.posts.map(post => (
-                      <div key={post.id} className="post-item">
-                        <div className="post-header">
-                          <div className="post-locale">
-                            <div className={`locale-flag ${post.flagClass}`}>
-                              {post.flagClass === 'vi' ? 'VN' : post.flagClass.toUpperCase()}
+                      <div key={post.id} className="bg-white border border-slate-200 rounded-lg p-4 transition-all hover:shadow-md">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2 font-semibold text-slate-900">
+                            <div className={`w-5 h-3.5 rounded-sm flex items-center justify-center text-xs font-bold text-white ${post.flagClass === 'vi' ? 'bg-red-600' : 'bg-blue-900'}`}>
+                              {post.flagClass.toUpperCase()}
                             </div>
                             {post.localeName}
                           </div>
-                          <div className="post-actions">
+                          <div className="flex gap-2">
                             <button
-                              className="btn-small btn-edit"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                editPost(post);
-                              }}
+                              className="px-2 py-1 border-none rounded text-xs font-medium cursor-pointer flex items-center gap-1 transition-all bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100"
+                              onClick={(e) => { e.stopPropagation(); handleEditPostClick(post); }}
                             >
-                              <i className="fas fa-edit"></i>
-                              Edit
+                              <FontAwesomeIcon icon={faEdit} /> Edit
                             </button>
                             <button
-                              className="btn-small btn-translate"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                translatePost(post);
-                              }}
+                              className="px-2 py-1 border-none rounded text-xs font-medium cursor-pointer flex items-center gap-1 transition-all bg-green-50 text-green-800 border border-green-200 hover:bg-green-100"
+                              onClick={(e) => { e.stopPropagation(); handleTranslateClick(post); }}
                             >
-                              <i className="fas fa-language"></i>
-                              Translate
+                              <FontAwesomeIcon icon={faLanguage} /> Translate
                             </button>
                             <button
-                              className="btn-small btn-delete"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                deletePost(post.id);
-                              }}
+                              className="px-2 py-1 border-none rounded text-xs font-medium cursor-pointer flex items-center gap-1 transition-all bg-red-50 text-red-700 border border-red-200 hover:bg-red-100"
+                              onClick={(e) => { e.stopPropagation(); deletePost(post.id); }}
                             >
-                              <i className="fas fa-trash"></i>
-                              Delete
+                              <FontAwesomeIcon icon={faTrash} /> Delete
                             </button>
                           </div>
                         </div>
-                        <div className="post-content">
-                          <div className="post-title">{post.title}</div>
-                          <div className="post-excerpt">{post.excerpt}</div>
+                        <div className="text-slate-600 text-sm leading-normal">
+                          <div className="font-semibold text-slate-900 mb-2">{post.title}</div>
+                          <div className="line-clamp-2">{post.excerpt}</div>
                         </div>
-                        <div className="post-meta">
-                          <div className="post-status">
-                            <div className={`status-dot status-${post.status}`}></div>
+                        <div className="flex justify-between items-center mt-3 pt-3 border-t border-slate-200 text-xs text-slate-500">
+                          <div className="flex items-center gap-1.5">
+                            <div className={`w-2 h-2 rounded-full ${post.status === 'published' ? 'bg-green-500' : 'bg-amber-500'}`}></div>
                             {post.status}
                           </div>
                           <span>Updated: {post.updatedAt}</span>
@@ -343,22 +346,22 @@ const Features: React.FC = () => {
 
       {/* Modals */}
       <AddFeatureModal
-        isOpen={addFeatureModalOpen}
-        onClose={() => setAddFeatureModalOpen(false)}
+        isOpen={isAddFeatureModalOpen}
+        onClose={() => setIsAddFeatureModalOpen(false)}
         onSave={handleSaveFeature}
       />
 
       <EditPostModal
-        isOpen={editModalOpen}
-        onClose={() => setEditModalOpen(false)}
-        post={currentEditingPost}
+        isOpen={isEditPostModalOpen}
+        onClose={() => setIsEditPostModalOpen(false)}
+        post={selectedPost}
         onSave={handleSavePost}
       />
 
       <TranslateModal
-        isOpen={translateModalOpen}
-        onClose={() => setTranslateModalOpen(false)}
-        post={currentTranslatingPost}
+        isOpen={isTranslateModalOpen}
+        onClose={() => setIsTranslateModalOpen(false)}
+        post={selectedPost}
         onTranslate={handleTranslate}
       />
     </div>

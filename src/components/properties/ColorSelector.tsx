@@ -3,12 +3,12 @@ import React from 'react';
 
 interface ColorSelectorProps {
   selectedColor: string;
-  onColorSelect: (color: string) => void;
+  onSelect: (color: string) => void;
 }
 
 export const ColorSelector: React.FC<ColorSelectorProps> = ({
   selectedColor,
-  onColorSelect
+  onSelect
 }) => {
   const colors = [
     'linear-gradient(135deg, #3b82f6, #1d4ed8)',
@@ -22,13 +22,15 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({
   ];
 
   return (
-    <div className="color-selector">
+    <div className="flex flex-wrap gap-2">
       {colors.map((color, index) => (
         <div
           key={index}
-          className={`color-option ${selectedColor === color ? 'selected' : ''}`}
+          className={`w-8 h-8 rounded-full cursor-pointer transition-transform transform hover:scale-110 ${
+            selectedColor === color ? 'ring-2 ring-offset-2 ring-blue-500' : ''
+          }`}
           style={{ background: color }}
-          onClick={() => onColorSelect(color)}
+          onClick={() => onSelect(color)}
           data-color={color}
         />
       ))}

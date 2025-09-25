@@ -1,7 +1,7 @@
-// Login.tsx - Complete conversion from HTML to React TypeScript
+// Login.tsx - Converted to use Tailwind CSS
 import React, { useState } from 'react';
 import type { FormEvent } from 'react';
-import '../styles/login.css';
+// import '../styles/login.css'; // Removed CSS import
 
 // TypeScript interfaces for type safety
 interface LoginFormData {
@@ -31,17 +31,14 @@ const Login: React.FC = () => {
     }));
   };
 
-  // doLogin function - EXACT same logic as HTML file
+  // doLogin function
   const doLogin = (e: FormEvent) => {
     e.preventDefault();
     
-    // Get values from state (equivalent to getElementById in HTML)
     const email = formData.email;
     const password = formData.password;
 
-    // Demo: check đơn giản - EXACT same logic as original
     if (email === " " && password === "123456") {
-      // Store user data for session management (added for React app)
       const userData: User = {
         email: email,
         name: 'Admin User',
@@ -51,18 +48,13 @@ const Login: React.FC = () => {
       localStorage.setItem('currentUser', JSON.stringify(userData));
       localStorage.setItem('isAuthenticated', 'true');
       
-      // Original redirect logic from HTML
-      // window.location.href = "index.html";
-      
-      // For demo purposes, show alert instead of redirect
       alert('Login successful! Redirecting to dashboard...');
       console.log('Login successful for:', email);
       
-      // In real application, you would use React Router:
-      // navigate('/dashboard') or history.push('/dashboard')
+      // In a real application, you would use React Router to navigate
+      // For example: window.location.href = "/";
       
     } else {
-      // EXACT same error message as HTML
       alert("Invalid email or password!");
     }
   };
@@ -70,29 +62,24 @@ const Login: React.FC = () => {
   // Handle reset password link click
   const handleResetPassword = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    // You can implement reset password functionality here
     alert('Reset password functionality would be implemented here');
   };
 
   return (
-    <div className="login-page">
-      <div className="login-container">
+    <div className="font-sans bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center min-h-screen p-5">
+      <div className="bg-white w-full max-w-md py-12 px-9 rounded-2xl shadow-2xl">
         
-        {/* Login Header - EXACT same structure as HTML */}
-        <div className="login-header">
-          <i className="fas fa-hotel fa-2x login-hotel-icon"></i>
-          <h2>Hotel Dashboard Login</h2>
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">Hotel Dashboard Login</h2>
         </div>
         
-        {/* Login Form - EXACT same structure as HTML */}
         <form onSubmit={doLogin}>
           
-          {/* Email Field */}
-          <div className="form-group">
-            <label className="form-label">Email</label>
+          <div className="mb-5">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
             <input 
               type="email" 
-              className="form-input" 
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm outline-none transition-all duration-200 bg-gray-50 text-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:bg-white placeholder-gray-400" 
               name="email"
               id="email" 
               placeholder="you@example.com" 
@@ -102,12 +89,11 @@ const Login: React.FC = () => {
             />
           </div>
           
-          {/* Password Field */}
-          <div className="form-group">
-            <label className="form-label">Password</label>
+          <div className="mb-5">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
             <input 
               type="password" 
-              className="form-input" 
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm outline-none transition-all duration-200 bg-gray-50 text-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:bg-white placeholder-gray-400" 
               name="password"
               id="password" 
               placeholder="********" 
@@ -117,20 +103,17 @@ const Login: React.FC = () => {
             />
           </div>
           
-          {/* Submit Button - EXACT same as HTML */}
-          <div className="login-button-wrapper">
-            <button type="submit" className="btn-primary">
-                <i className="fas fa-sign-in-alt"></i> Login
+          <div className="mt-2">
+            <button type="submit" className="w-full bg-blue-500 text-white border-none px-4 py-3 rounded-lg cursor-pointer text-base font-medium transition-colors duration-200 hover:bg-blue-600 flex items-center justify-center gap-2 min-h-[44px]">
+                <i className="fas fa-sign-in-alt text-sm"></i> Login
               </button>
           </div>
           
-          
         </form>
         
-        {/* Login Footer - EXACT same structure as HTML */}
-        <div className="login-footer">
+        <div className="text-center mt-5 text-sm text-gray-600">
           <p>
-            Forgot your password? <a href="#" onClick={handleResetPassword}>Reset</a>
+            Forgot your password? <a href="#" onClick={handleResetPassword} className="text-blue-500 no-underline cursor-pointer bg-none border-none text-sm hover:underline">Reset</a>
           </p>
         </div>
         

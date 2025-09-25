@@ -33,30 +33,40 @@ const UserModal: React.FC<UserModalProps> = ({
   onSave,
 }) => {
   const overlayRef = useRef<HTMLDivElement | null>(null);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [role, setRole] = useState<Role | ''>('');
-  const [status, setStatus] = useState<'active' | 'inactive'>('active');
-  const [permissions, setPermissions] = useState<Record<string, boolean>>({
-    ...defaultPermissions,
+  const [formData, setFormData] = useState<UserFormData>({
+    id: undefined,
+    name: '',
+    email: '',
+    role: '',
+    status: 'active',
+    permissions: { ...defaultPermissions },
   });
 
   useEffect(() => {
-    if (initialData) {
-      setName(initialData.name ?? '');
-      setEmail(initialData.email ?? '');
-      setRole(initialData.role ?? '');
-      setStatus(initialData.status ?? 'active');
-      setPermissions({
-        ...defaultPermissions,
-        ...(initialData.permissions ?? {}),
-      });
-    } else {
-      setName('');
-      setEmail('');
-      setRole('');
-      setStatus('active');
-      setPermissions({ ...defaultPermissions });
+    if (isOpen) {
+      if (initialData) {
+        setFormData({
+          id: initialData.id,
+          name: initialData.name ?? '',
+          email: initialData.email ?? '',
+          role: initialData.role ?? '',
+          status: initialData.status ?? 'active',
+          permissions: {
+            ...defaultPermissions,
+            ...(initialData.permissions ?? {}),
+          },
+        });
+      } else {
+        // Reset for new user
+        setFormData({
+          id: undefined,
+          name: '',
+          email: '',
+          role: '',
+          status: 'active',
+          permissions: { ...defaultPermissions },
+        });
+      }
     }
   }, [initialData, isOpen]);
 
@@ -71,19 +81,18 @@ const UserModal: React.FC<UserModalProps> = ({
     return () => document.removeEventListener('click', handler);
   }, [isOpen, onClose]);
 
-  const togglePermission = (key: string) => {
-    setPermissions((prev) => ({ ...prev, [key]: !prev[key] }));
+  const handleChange = (
+    field: keyof UserFormData,
+    value: string | boolean | Record<string, boolean>
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const payload: UserFormData = {
-      id: initialData?.id,
-      name: name.trim(),
-      email: email.trim(),
-      role: (role || '') as Role | '',
-      status,
-      permissions: role === 'editor' ? permissions : undefined,
+      ...formData,
+      permissions: formData.role === 'editor' ? formData.permissions : undefined,
     };
     await onSave(payload);
     onClose();
@@ -94,17 +103,17 @@ const UserModal: React.FC<UserModalProps> = ({
   return createPortal(
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm"
     >
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-md">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg border border-slate-200">
         {/* Header */}
-        <div className="flex items-center justify-between border-b px-6 py-4">
-          <h3 className="text-lg font-semibold">
+        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+          <h3 className="text-lg font-semibold text-slate-800">
             {initialData ? 'Edit User' : 'Add New User'}
           </h3>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="w-8 h-8 flex items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors"
             aria-label="Close"
           >
             <i className="fas fa-times"></i>
@@ -112,112 +121,90 @@ const UserModal: React.FC<UserModalProps> = ({
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Full Name
-            </label>
-            <input
-              type="text"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter full name"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email Address
-            </label>
-            <input
-              type="email"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter email address"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Role
-            </label>
-            <select
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              value={role}
-              onChange={(e) => setRole(e.target.value as Role)}
-              required
-            >
-              <option value="">Select a role</option>
-              <option value="owner">Owner</option>
-              <option value="admin">Admin</option>
-              <option value="editor">Editor</option>
-              <option value="viewer">Viewer</option>
-            </select>
-            {role && (
-              <p className="mt-1 text-xs text-gray-500">
-                {roleDescriptions[role as Role]}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status
-            </label>
-            <select
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              value={status}
-              onChange={(e) =>
-                setStatus(e.target.value as 'active' | 'inactive')
-              }
-              required
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-
-          {/* Permissions */}
-          {role === 'editor' && (
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-2">
-                Permissions
-              </h4>
-              <div className="space-y-2">
-                {Object.keys(defaultPermissions).map((permKey) => (
-                  <label
-                    key={permKey}
-                    className="flex items-center justify-between text-sm"
-                  >
-                    <span className="capitalize">{permKey}</span>
-                    <input
-                      type="checkbox"
-                      checked={permissions[permKey]}
-                      onChange={() => togglePermission(permKey)}
-                      className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-                    />
-                  </label>
-                ))}
-              </div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                Full Name
+              </label>
+              <input
+                type="text"
+                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm bg-white transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                value={formData.name}
+                onChange={(e) => handleChange('name', e.target.value)}
+                placeholder="Enter full name"
+                required
+              />
             </div>
-          )}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                Email Address
+              </label>
+              <input
+                type="email"
+                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm bg-white transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                value={formData.email}
+                onChange={(e) => handleChange('email', e.target.value)}
+                placeholder="Enter email address"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                Role
+              </label>
+              <select
+                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm bg-white transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                value={formData.role}
+                onChange={(e) => handleChange('role', e.target.value)}
+                required
+              >
+                <option value="" disabled>Select a role</option>
+                <option value="owner">Owner</option>
+                <option value="admin">Admin</option>
+                <option value="editor">Editor</option>
+                <option value="viewer">Viewer</option>
+              </select>
+              {formData.role && (
+                <p className="mt-2 text-xs text-slate-500">
+                  {roleDescriptions[formData.role as Role]}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                Status
+              </label>
+              <select
+                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm bg-white transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                value={formData.status}
+                onChange={(e) =>
+                  handleChange('status', e.target.value)
+                }
+                required
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
 
           {/* Actions */}
-          <div className="flex justify-end space-x-2 border-t pt-4">
+          <div className="flex justify-end space-x-3 border-t border-slate-200 pt-5 mt-6">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-md border border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200"
+              className="px-5 py-2.5 rounded-lg border border-slate-300 bg-white text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+              className="px-5 py-2.5 rounded-lg bg-blue-600 text-sm font-medium text-white transition-colors hover:bg-blue-700"
             >
               {initialData ? 'Save Changes' : 'Save User'}
             </button>
@@ -225,7 +212,7 @@ const UserModal: React.FC<UserModalProps> = ({
         </form>
       </div>
     </div>,
-    document.body // ✅ thêm container đúng chỗ
+    document.body
   );
 };
 

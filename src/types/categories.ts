@@ -1,6 +1,7 @@
 // src/types/categories.ts
 
 export interface Category {
+  name: string;
   id: number;
   slug: string;
   icon: string;

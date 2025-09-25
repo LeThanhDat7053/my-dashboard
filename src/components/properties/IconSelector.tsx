@@ -1,35 +1,42 @@
 // src/components/properties/IconSelector.tsx
 import React, { useState, useRef, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import type { IconProp } from '@fortawesome/fontawesome-svg-core';
+import {
+  faBuilding, faHotel, faHome, faCrown, faGem, faStar,
+  faMountain, faUmbrellaBeach, faTree, faLandmark, faChessRook, faCity,
+  faUniversity, faMosque, faChurch, faSynagogue
+} from '@fortawesome/free-solid-svg-icons';
 
 interface IconSelectorProps {
   selectedIcon: string;
-  onIconSelect: (icon: string) => void;
+  onSelect: (icon: string) => void;
 }
 
 export const IconSelector: React.FC<IconSelectorProps> = ({
   selectedIcon,
-  onIconSelect
+  onSelect
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const selectorRef = useRef<HTMLDivElement>(null);
 
-  const icons = [
-    'fa-building',
-    'fa-hotel',
-    'fa-home',
-    'fa-crown',
-    'fa-gem',
-    'fa-star',
-    'fa-mountain',
-    'fa-umbrella-beach',
-    'fa-tree',
-    'fa-landmark',
-    'fa-chess-rook',
-    'fa-city',
-    'fa-university',
-    'fa-mosque',
-    'fa-church',
-    'fa-synagogue'
+  const icons: { name: string; icon: IconProp }[] = [
+    { name: 'fa-building', icon: faBuilding },
+    { name: 'fa-hotel', icon: faHotel },
+    { name: 'fa-home', icon: faHome },
+    { name: 'fa-crown', icon: faCrown },
+    { name: 'fa-gem', icon: faGem },
+    { name: 'fa-star', icon: faStar },
+    { name: 'fa-mountain', icon: faMountain },
+    { name: 'fa-umbrella-beach', icon: faUmbrellaBeach },
+    { name: 'fa-tree', icon: faTree },
+    { name: 'fa-landmark', icon: faLandmark },
+    { name: 'fa-chess-rook', icon: faChessRook },
+    { name: 'fa-city', icon: faCity },
+    { name: 'fa-university', icon: faUniversity },
+    { name: 'fa-mosque', icon: faMosque },
+    { name: 'fa-church', icon: faChurch },
+    { name: 'fa-synagogue', icon: faSynagogue }
   ];
 
   useEffect(() => {
@@ -43,35 +50,33 @@ export const IconSelector: React.FC<IconSelectorProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleIconSelect = (icon: string) => {
-    onIconSelect(icon);
+  const handleIconSelect = (iconName: string) => {
+    onSelect(iconName);
     setIsOpen(false);
   };
 
-  const handleToggle = () => {
-    setIsOpen(!isOpen);
-  };
+  const selectedIconObject = icons.find(i => i.name === selectedIcon) || icons[0];
 
   return (
-    <div className="icon-selector" ref={selectorRef}>
-      <div 
-        className="selected-icon" 
-        onClick={handleToggle}
+    <div className="relative" ref={selectorRef}>
+      <div
+        className="flex items-center gap-3 p-2.5 border border-slate-300 rounded-lg cursor-pointer bg-white hover:border-blue-400"
+        onClick={() => setIsOpen(!isOpen)}
       >
-        <i className={`fas ${selectedIcon}`}></i>
-        <span>Click to change</span>
+        <FontAwesomeIcon icon={selectedIconObject.icon} className="text-slate-600 w-5 text-center" />
+        <span className="text-sm text-slate-500">Click to change</span>
       </div>
       {isOpen && (
-        <div className="icon-picker show">
-          <div className="icon-grid">
-            {icons.map((icon) => (
+        <div className="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg">
+          <div className="grid grid-cols-6 gap-1 p-2">
+            {icons.map(({ name, icon }) => (
               <div
-                key={icon}
-                className="icon-option"
-                onClick={() => handleIconSelect(icon)}
-                title={icon.replace('fa-', '').replace('-', ' ')}
+                key={name}
+                className="flex items-center justify-center h-10 rounded-md hover:bg-slate-100 cursor-pointer"
+                onClick={() => handleIconSelect(name)}
+                title={name.replace('fa-', '').replace('-', ' ')}
               >
-                <i className={`fas ${icon}`}></i>
+                <FontAwesomeIcon icon={icon} className="text-xl text-slate-600" />
               </div>
             ))}
           </div>

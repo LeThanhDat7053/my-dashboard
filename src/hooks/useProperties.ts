@@ -151,51 +151,50 @@ export const useProperties = () => {
     });
   };
 
-  // Hotel post management functions
-  const createHotelPost = async (hotelId: string, postData: Omit<HotelPost, 'id' | 'hotelId' | 'updatedAt'>): Promise<void> => {
-    const newPost: HotelPost = {
-      ...postData,
-      id: Date.now(),
-      hotelId,
-      updatedAt: new Date().toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
-      })
-    };
-
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setHotels(prev => prev.map(hotel => 
-      hotel.id === hotelId 
-        ? { ...hotel, posts: [...hotel.posts, newPost] }
-        : hotel
-    ));
+  // CRUD operations for Hotel Posts
+  const createHotelPost = async (hotelId: string, postData: Partial<HotelPost>) => {
+    setHotels(currentHotels => {
+      return currentHotels.map(hotel => {
+        if (hotel.id === hotelId) {
+          const newPost: HotelPost = {
+            id: Date.now(), // Simple unique ID
+            hotelId,
+            title: postData.title || 'Untitled Post',
+            content: postData.content || '',
+            locale: postData.locale || 'en',
+            status: postData.status || 'draft',
+            address: postData.address || hotel.address,
+            phone: postData.phone || hotel.phone,
+            vrLink: postData.vrLink || hotel.vrLink,
+            updatedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          };
+          return { ...hotel, posts: [...hotel.posts, newPost] };
+        }
+        return hotel;
+      });
+    });
   };
 
-  const updateHotelPost = async (postData: HotelPost): Promise<void> => {
-    const updatedPost = {
-      ...postData,
-      updatedAt: new Date().toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
-      })
-    };
-
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setHotels(prev => prev.map(hotel => ({
-      ...hotel,
-      posts: hotel.posts.map(post => 
-        post.id === updatedPost.id ? updatedPost : post
-      )
-    })));
+  const updateHotelPost = async (updatedPost: HotelPost) => {
+    setHotels(currentHotels => {
+      return currentHotels.map(hotel => {
+        if (hotel.id === updatedPost.hotelId) {
+          const postIndex = hotel.posts.findIndex(p => p.id === updatedPost.id);
+          if (postIndex !== -1) {
+            const newPosts = [...hotel.posts];
+            newPosts[postIndex] = {
+              ...updatedPost,
+              updatedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            };
+            return { ...hotel, posts: newPosts };
+          }
+        }
+        return hotel;
+      });
+    });
   };
 
-  const deleteHotelPost = async (postId: number): Promise<void> => {
+  const deleteHotelPost = async (postId: number) => {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     

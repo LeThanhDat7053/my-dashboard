@@ -1,5 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import '../../styles/EditPostModal.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faTimes, faInfoCircle, faLink, faBold, faItalic, faUnderline, faStrikethrough, 
+  faListOl, faListUl, faIndent, faOutdent, faAlignLeft, faAlignCenter, faAlignRight, 
+  faImage, faTable, faCode 
+} from '@fortawesome/free-solid-svg-icons';
 
 interface Post {
   id: number;
@@ -33,7 +38,7 @@ const EditPostModal: React.FC<EditPostModalProps> = ({ isOpen, onClose, post, on
     slug: '',
     target: 'self',
     content: '',
-    status: 'draft',
+    status: 'draft' as 'draft' | 'published',
     vrLink: ''
   });
 
@@ -162,22 +167,22 @@ const EditPostModal: React.FC<EditPostModalProps> = ({ isOpen, onClose, post, on
   if (!isOpen) return null;
 
   return (
-    <div className="edit-post-modal-overlay" onClick={handleModalClick}>
-      <div className="edit-post-modal-content">
-        <div className="edit-post-modal-header">
-          <h3 className="edit-post-modal-title">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-[1000] flex items-center justify-center" onClick={handleModalClick}>
+      <div className="bg-white rounded-xl p-6 w-[90%] max-w-4xl max-h-[90vh] overflow-y-auto shadow-lg">
+        <div className="flex justify-between items-center mb-5">
+          <h3 className="text-lg font-semibold text-slate-900">
             {post ? `Edit Post #${post.id}` : 'Add New Post'}
           </h3>
-          <button className="edit-post-close-btn" onClick={onClose}>
-            <i className="fas fa-times"></i>
+          <button className="bg-transparent border-none text-slate-500 cursor-pointer p-1 rounded hover:bg-slate-100 hover:text-slate-900" onClick={onClose}>
+            <FontAwesomeIcon icon={faTimes} size="lg" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="edit-post-form-group">
-            <label className="edit-post-form-label">Language</label>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Language</label>
             <select
-              className="edit-post-form-input"
+              className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white transition-all focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               value={postForm.locale}
               onChange={(e) => setPostForm(prev => ({ ...prev, locale: e.target.value }))}
               required
@@ -190,128 +195,130 @@ const EditPostModal: React.FC<EditPostModalProps> = ({ isOpen, onClose, post, on
             </select>
           </div>
 
-          <div className="edit-post-form-group">
-            <label className="edit-post-form-label">Post Title</label>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Post Title</label>
             <input
               type="text"
-              className="edit-post-form-input"
+              className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white transition-all focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               value={postForm.title}
               onChange={(e) => setPostForm(prev => ({ ...prev, title: e.target.value }))}
               required
             />
           </div>
 
-          <div className="edit-post-form-group">
-            <label className="edit-post-form-label">VR360 Tour Link</label>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">VR360 Tour Link</label>
             <input
               type="url"
-              className="edit-post-form-input"
+              className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white transition-all focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               value={postForm.vrLink}
               onChange={(e) => setPostForm(prev => ({ ...prev, vrLink: e.target.value }))}
               placeholder="https://example.com/vr-tour"
             />
-            <small className="edit-post-form-hint">
-              <i className="fas fa-info-circle"></i> Optional: Link to virtual reality tour of the hotel
+            <small className="text-slate-500 text-xs mt-1 flex items-center gap-1.5">
+              <FontAwesomeIcon icon={faInfoCircle} /> Optional: Link to virtual reality tour of the hotel
             </small>
           </div>
 
-          <div className="edit-post-form-group">
-            <label className="edit-post-form-label">Slug / External Link *</label>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Slug / External Link *</label>
             <input
               type="text"
-              className="edit-post-form-input"
+              className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white transition-all focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               value={postForm.slug}
               onChange={(e) => setPostForm(prev => ({ ...prev, slug: e.target.value }))}
               placeholder="e.g., swimming-pool or https://example.com/pool"
               required
             />
-            <small className="edit-post-form-hint">
-              <i className="fas fa-link"></i> Enter a slug for internal page or a full URL for external link
+            <small className="text-slate-500 text-xs mt-1 flex items-center gap-1.5">
+              <FontAwesomeIcon icon={faLink} /> Enter a slug for internal page or a full URL for external link
             </small>
           </div>
 
-          <div className="edit-post-form-group">
-            <label className="edit-post-form-label">Open Link In</label>
-            <div className="edit-post-radio-group">
-              <label className="edit-post-radio-option">
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Open Link In</label>
+            <div className="flex gap-5 mt-1.5">
+              <label className="flex items-center gap-1.5 cursor-pointer text-sm text-gray-700">
                 <input
                   type="radio"
                   name="target"
                   value="self"
                   checked={postForm.target === 'self'}
                   onChange={(e) => setPostForm(prev => ({ ...prev, target: e.target.value }))}
+                  className="accent-blue-600 w-4 h-4"
                 />
                 <span>Current Page</span>
               </label>
-              <label className="edit-post-radio-option">
+              <label className="flex items-center gap-1.5 cursor-pointer text-sm text-gray-700">
                 <input
                   type="radio"
                   name="target"
                   value="blank"
                   checked={postForm.target === 'blank'}
                   onChange={(e) => setPostForm(prev => ({ ...prev, target: e.target.value }))}
+                  className="accent-blue-600 w-4 h-4"
                 />
                 <span>New Tab</span>
               </label>
             </div>
           </div>
 
-          <div className="edit-post-form-group">
-            <label className="edit-post-form-label">Content</label>
-            <div className="edit-post-editor-container">
-              <div className="edit-post-editor-toolbar">
-                <div className="edit-post-toolbar-group">
-                  <button type="button" className="edit-post-editor-btn" onClick={() => formatText('bold')} title="Bold">
-                    <i className="fas fa-bold"></i>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Content</label>
+            <div className="border border-slate-300 rounded-lg bg-white overflow-hidden">
+              <div className="bg-slate-50 border-b border-slate-300 p-2 flex gap-2 flex-wrap items-center">
+                <div className="flex gap-1 items-center pr-2 border-r border-slate-300">
+                  <button type="button" className="bg-white border border-slate-300 rounded p-1.5 cursor-pointer text-slate-500 text-xs transition-all w-8 h-8 flex items-center justify-center hover:bg-slate-100 hover:text-slate-900 hover:border-slate-400" onClick={() => formatText('bold')} title="Bold">
+                    <FontAwesomeIcon icon={faBold} />
                   </button>
-                  <button type="button" className="edit-post-editor-btn" onClick={() => formatText('italic')} title="Italic">
-                    <i className="fas fa-italic"></i>
+                  <button type="button" className="bg-white border border-slate-300 rounded p-1.5 cursor-pointer text-slate-500 text-xs transition-all w-8 h-8 flex items-center justify-center hover:bg-slate-100 hover:text-slate-900 hover:border-slate-400" onClick={() => formatText('italic')} title="Italic">
+                    <FontAwesomeIcon icon={faItalic} />
                   </button>
-                  <button type="button" className="edit-post-editor-btn" onClick={() => formatText('underline')} title="Underline">
-                    <i className="fas fa-underline"></i>
+                  <button type="button" className="bg-white border border-slate-300 rounded p-1.5 cursor-pointer text-slate-500 text-xs transition-all w-8 h-8 flex items-center justify-center hover:bg-slate-100 hover:text-slate-900 hover:border-slate-400" onClick={() => formatText('underline')} title="Underline">
+                    <FontAwesomeIcon icon={faUnderline} />
                   </button>
-                  <button type="button" className="edit-post-editor-btn" onClick={() => formatText('strikeThrough')} title="Strikethrough">
-                    <i className="fas fa-strikethrough"></i>
-                  </button>
-                </div>
-                <div className="edit-post-toolbar-group">
-                  <button type="button" className="edit-post-editor-btn" onClick={() => formatText('insertOrderedList')} title="Numbered List">
-                    <i className="fas fa-list-ol"></i>
-                  </button>
-                  <button type="button" className="edit-post-editor-btn" onClick={() => formatText('insertUnorderedList')} title="Bullet List">
-                    <i className="fas fa-list-ul"></i>
-                  </button>
-                  <button type="button" className="edit-post-editor-btn" onClick={() => formatText('indent')} title="Indent">
-                    <i className="fas fa-indent"></i>
-                  </button>
-                  <button type="button" className="edit-post-editor-btn" onClick={() => formatText('outdent')} title="Outdent">
-                    <i className="fas fa-outdent"></i>
+                  <button type="button" className="bg-white border border-slate-300 rounded p-1.5 cursor-pointer text-slate-500 text-xs transition-all w-8 h-8 flex items-center justify-center hover:bg-slate-100 hover:text-slate-900 hover:border-slate-400" onClick={() => formatText('strikeThrough')} title="Strikethrough">
+                    <FontAwesomeIcon icon={faStrikethrough} />
                   </button>
                 </div>
-                <div className="edit-post-toolbar-group">
-                  <button type="button" className="edit-post-editor-btn" onClick={() => formatText('justifyLeft')} title="Align Left">
-                    <i className="fas fa-align-left"></i>
+                <div className="flex gap-1 items-center pr-2 border-r border-slate-300">
+                  <button type="button" className="bg-white border border-slate-300 rounded p-1.5 cursor-pointer text-slate-500 text-xs transition-all w-8 h-8 flex items-center justify-center hover:bg-slate-100 hover:text-slate-900 hover:border-slate-400" onClick={() => formatText('insertOrderedList')} title="Numbered List">
+                    <FontAwesomeIcon icon={faListOl} />
                   </button>
-                  <button type="button" className="edit-post-editor-btn" onClick={() => formatText('justifyCenter')} title="Align Center">
-                    <i className="fas fa-align-center"></i>
+                  <button type="button" className="bg-white border border-slate-300 rounded p-1.5 cursor-pointer text-slate-500 text-xs transition-all w-8 h-8 flex items-center justify-center hover:bg-slate-100 hover:text-slate-900 hover:border-slate-400" onClick={() => formatText('insertUnorderedList')} title="Bullet List">
+                    <FontAwesomeIcon icon={faListUl} />
                   </button>
-                  <button type="button" className="edit-post-editor-btn" onClick={() => formatText('justifyRight')} title="Align Right">
-                    <i className="fas fa-align-right"></i>
+                  <button type="button" className="bg-white border border-slate-300 rounded p-1.5 cursor-pointer text-slate-500 text-xs transition-all w-8 h-8 flex items-center justify-center hover:bg-slate-100 hover:text-slate-900 hover:border-slate-400" onClick={() => formatText('indent')} title="Indent">
+                    <FontAwesomeIcon icon={faIndent} />
                   </button>
-                </div>
-                <div className="edit-post-toolbar-group">
-                  <button type="button" className="edit-post-editor-btn" onClick={insertLink} title="Insert Link">
-                    <i className="fas fa-link"></i>
-                  </button>
-                  <button type="button" className="edit-post-editor-btn" onClick={insertImage} title="Insert Image">
-                    <i className="fas fa-image"></i>
-                  </button>
-                  <button type="button" className="edit-post-editor-btn" onClick={insertTable} title="Insert Table">
-                    <i className="fas fa-table"></i>
+                  <button type="button" className="bg-white border border-slate-300 rounded p-1.5 cursor-pointer text-slate-500 text-xs transition-all w-8 h-8 flex items-center justify-center hover:bg-slate-100 hover:text-slate-900 hover:border-slate-400" onClick={() => formatText('outdent')} title="Outdent">
+                    <FontAwesomeIcon icon={faOutdent} />
                   </button>
                 </div>
-                <div className="edit-post-toolbar-group">
-                  <select className="edit-post-format-select" onChange={(e) => formatHeading(e.target.value)}>
+                <div className="flex gap-1 items-center pr-2 border-r border-slate-300">
+                  <button type="button" className="bg-white border border-slate-300 rounded p-1.5 cursor-pointer text-slate-500 text-xs transition-all w-8 h-8 flex items-center justify-center hover:bg-slate-100 hover:text-slate-900 hover:border-slate-400" onClick={() => formatText('justifyLeft')} title="Align Left">
+                    <FontAwesomeIcon icon={faAlignLeft} />
+                  </button>
+                  <button type="button" className="bg-white border border-slate-300 rounded p-1.5 cursor-pointer text-slate-500 text-xs transition-all w-8 h-8 flex items-center justify-center hover:bg-slate-100 hover:text-slate-900 hover:border-slate-400" onClick={() => formatText('justifyCenter')} title="Align Center">
+                    <FontAwesomeIcon icon={faAlignCenter} />
+                  </button>
+                  <button type="button" className="bg-white border border-slate-300 rounded p-1.5 cursor-pointer text-slate-500 text-xs transition-all w-8 h-8 flex items-center justify-center hover:bg-slate-100 hover:text-slate-900 hover:border-slate-400" onClick={() => formatText('justifyRight')} title="Align Right">
+                    <FontAwesomeIcon icon={faAlignRight} />
+                  </button>
+                </div>
+                <div className="flex gap-1 items-center pr-2 border-r border-slate-300">
+                  <button type="button" className="bg-white border border-slate-300 rounded p-1.5 cursor-pointer text-slate-500 text-xs transition-all w-8 h-8 flex items-center justify-center hover:bg-slate-100 hover:text-slate-900 hover:border-slate-400" onClick={insertLink} title="Insert Link">
+                    <FontAwesomeIcon icon={faLink} />
+                  </button>
+                  <button type="button" className="bg-white border border-slate-300 rounded p-1.5 cursor-pointer text-slate-500 text-xs transition-all w-8 h-8 flex items-center justify-center hover:bg-slate-100 hover:text-slate-900 hover:border-slate-400" onClick={insertImage} title="Insert Image">
+                    <FontAwesomeIcon icon={faImage} />
+                  </button>
+                  <button type="button" className="bg-white border border-slate-300 rounded p-1.5 cursor-pointer text-slate-500 text-xs transition-all w-8 h-8 flex items-center justify-center hover:bg-slate-100 hover:text-slate-900 hover:border-slate-400" onClick={insertTable} title="Insert Table">
+                    <FontAwesomeIcon icon={faTable} />
+                  </button>
+                </div>
+                <div className="flex gap-1 items-center pr-2 border-r border-slate-300 last:border-r-0">
+                  <select className="px-2 py-1 border border-slate-300 rounded text-xs bg-white text-slate-500 min-w-[100px] h-8" onChange={(e) => formatHeading(e.target.value)}>
                     <option value="">Normal Text</option>
                     <option value="h1">Heading 1</option>
                     <option value="h2">Heading 2</option>
@@ -320,14 +327,14 @@ const EditPostModal: React.FC<EditPostModalProps> = ({ isOpen, onClose, post, on
                     <option value="blockquote">Quote</option>
                   </select>
                 </div>
-                <div className="edit-post-toolbar-group">
+                <div className="flex gap-1 items-center">
                   <button
                     type="button"
-                    className={`edit-post-editor-btn ${editorMode === 'html' ? 'active' : ''}`}
+                    className={`bg-white border border-slate-300 rounded p-1.5 cursor-pointer text-slate-500 text-xs transition-all h-8 flex items-center justify-center gap-1.5 hover:bg-slate-100 hover:text-slate-900 hover:border-slate-400 ${editorMode === 'html' ? 'bg-blue-600 text-white border-blue-600' : ''}`}
                     onClick={toggleEditorMode}
                     title="Toggle HTML/Visual"
                   >
-                    <i className="fas fa-code"></i>
+                    <FontAwesomeIcon icon={faCode} />
                     {editorMode === 'html' ? 'Visual' : 'HTML'}
                   </button>
                 </div>
@@ -336,14 +343,14 @@ const EditPostModal: React.FC<EditPostModalProps> = ({ isOpen, onClose, post, on
               {editorMode === 'visual' ? (
                 <div
                   ref={editorRef}
-                  className="edit-post-editor-content"
+                  className="prose max-w-none min-h-[250px] p-4 outline-none text-sm leading-relaxed text-gray-800"
                   contentEditable
                   dangerouslySetInnerHTML={{ __html: editorContent }}
                   onInput={syncContentToHTML}
                 />
               ) : (
                 <textarea
-                  className="edit-post-editor-html"
+                  className="font-mono text-sm leading-normal bg-slate-50 border-none outline-none resize-y min-h-[250px] p-4 w-full box-border"
                   value={htmlContent}
                   onChange={(e) => setHtmlContent(e.target.value)}
                   required
@@ -352,23 +359,23 @@ const EditPostModal: React.FC<EditPostModalProps> = ({ isOpen, onClose, post, on
             </div>
           </div>
 
-          <div className="edit-post-form-group">
-            <label className="edit-post-form-label">Status</label>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Status</label>
             <select
-              className="edit-post-form-input"
+              className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white transition-all focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               value={postForm.status}
-              onChange={(e) => setPostForm(prev => ({ ...prev, status: e.target.value }))}
+              onChange={(e) => setPostForm(prev => ({ ...prev, status: e.target.value as 'draft' | 'published' }))}
             >
               <option value="draft">Draft</option>
               <option value="published">Published</option>
             </select>
           </div>
 
-          <div className="edit-post-modal-actions">
-            <button type="button" className="edit-post-btn-cancel" onClick={onClose}>
+          <div className="flex gap-3 justify-end mt-6 pt-5 border-t border-slate-200">
+            <button type="button" className="bg-slate-50 text-gray-700 border border-slate-300 px-5 py-2.5 rounded-lg text-sm font-medium cursor-pointer transition-all hover:bg-slate-100" onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" className="edit-post-btn-save">
+            <button type="submit" className="bg-green-600 text-white border-none px-5 py-2.5 rounded-lg text-sm font-medium cursor-pointer transition-colors hover:bg-green-700">
               Save Changes
             </button>
           </div>

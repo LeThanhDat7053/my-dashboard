@@ -1,20 +1,18 @@
-// src/layouts/MainLayout.tsx - UPDATED
+// src/layouts/MainLayout.tsx
 import React from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
-import Sidebar from '../components/Sidebar.tsx';
-import Header from '../components/Header';
+import { Routes, Route, Outlet, useLocation } from 'react-router-dom';
+import Sidebar from '../components/layout/Sidebar'; // Corrected import path
+import Header from '../components/layout/Header';   // Corrected import path
+import Dashboard from '../pages/Dashboard';
+import Users from '../pages/Users';
+import Settings from '../pages/Settings';
+import Categories from '../pages/Categories';
+import Features from '../pages/Features';
+import Properties from '../pages/Properties';
+import Media from '../pages/Media';
+import Analytics from '../pages/Analytics';
 
-interface MainLayoutProps {
-  onLogout?: () => void;
-  onSearch?: (query: string) => void;
-  onNotificationClick?: () => void;
-}
-
-const MainLayout: React.FC<MainLayoutProps> = ({
-  onLogout,
-  onSearch,
-  onNotificationClick
-}) => {
+const MainLayout: React.FC = () => {
   const location = useLocation();
 
   // Map routes to page titles and breadcrumbs
@@ -45,50 +43,40 @@ const MainLayout: React.FC<MainLayoutProps> = ({
 
   const pageInfo = getPageInfo(location.pathname);
 
-  const handleLogout = () => {
-    console.log('User logged out');
-    onLogout?.();
-    // Add your logout logic here
-    // Example: clear tokens, redirect to login, etc.
-  };
-
   const handleSearch = (query: string) => {
     console.log('Search query:', query);
-    onSearch?.(query);
-    // Add your search logic here
-    alert(`Searching for: ${query}`);
+    // Implement global search logic here
   };
 
   const handleNotifications = () => {
-    console.log('Notifications clicked');
-    onNotificationClick?.();
-    // Add your notification logic here
-    alert('Notifications - Add dropdown here');
-  };
-
-  const user = {
-    id: '1',
-    name: 'John Doe',
-    role: 'Owner',
-    initials: 'JD'
+    console.log('Notification icon clicked');
+    // Implement notification logic here
   };
 
   return (
-    // Remove Tailwind classes that conflict with custom CSS
-    <div className="app-layout">
-      <Sidebar onLogout={handleLogout} />
-      <Header
-        title={pageInfo.title}
-        breadcrumb={pageInfo.breadcrumb}
-        user={user}
-        onSearch={handleSearch}
-        onNotificationClick={handleNotifications}
-      />
-      
-      {/* Main Content Area */}
-      <main className="main-content">
-        <Outlet />
-      </main>
+    <div className="bg-slate-50 min-h-screen">
+      <Sidebar />
+      <div className="sm:ml-64">
+        <Header 
+          title={pageInfo.title} 
+          breadcrumb={pageInfo.breadcrumb}
+          onSearch={handleSearch}
+          onNotificationClick={handleNotifications}
+        />
+        <main className="pt-20 px-6 pb-6">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/users" element={<Users />} />
+            <Route path="/settings/*" element={<Settings />} />
+            <Route path="/categories/*" element={<Categories />} />
+            <Route path="/features/*" element={<Features />} />
+            <Route path="/properties/*" element={<Properties />} />
+            <Route path="/media" element={<Media />} />
+            <Route path="/analytics" element={<Analytics />} />
+          </Routes>
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 };

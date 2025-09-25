@@ -1,5 +1,10 @@
 // src/components/properties/RichTextEditor.tsx
 import React, { useState, useRef, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faBold, faItalic, faUnderline, faStrikethrough, faListUl, faListOl, 
+  faLink, faImage, faCode, faQuoteRight 
+} from '@fortawesome/free-solid-svg-icons';
 
 interface RichTextEditorProps {
   content: string;
@@ -13,222 +18,115 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   placeholder = 'Start typing...'
 }) => {
   const [isHtmlMode, setIsHtmlMode] = useState(false);
-  const [htmlContent, setHtmlContent] = useState(content);
   const editorRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (!isHtmlMode && editorRef.current) {
+    if (editorRef.current && editorRef.current.innerHTML !== content) {
       editorRef.current.innerHTML = content;
-    } else if (isHtmlMode && textareaRef.current) {
-      textareaRef.current.value = content;
     }
-  }, [content, isHtmlMode]);
+  }, [content]);
 
   const formatText = (command: string, value?: string) => {
     document.execCommand(command, false, value);
     if (editorRef.current) {
       onChange(editorRef.current.innerHTML);
     }
-  };
-
-  const formatHeading = (tag: string) => {
-    if (tag) {
-      formatText('formatBlock', tag);
-    } else {
-      formatText('formatBlock', 'div');
-    }
+    editorRef.current?.focus();
   };
 
   const insertLink = () => {
     const url = prompt('Enter the URL:');
-    if (url) {
-      formatText('createLink', url);
-    }
+    if (url) formatText('createLink', url);
   };
 
   const insertImage = () => {
     const url = prompt('Enter the image URL:');
-    if (url) {
-      formatText('insertImage', url);
-    }
-  };
-
-  const toggleMode = () => {
-    if (isHtmlMode) {
-      // Switching to visual mode
-      const htmlValue = textareaRef.current?.value || '';
-      setHtmlContent(htmlValue);
-      if (editorRef.current) {
-        editorRef.current.innerHTML = htmlValue;
-      }
-      onChange(htmlValue);
-    } else {
-      // Switching to HTML mode
-      const visualContent = editorRef.current?.innerHTML || '';
-      setHtmlContent(visualContent);
-      onChange(visualContent);
-    }
-    setIsHtmlMode(!isHtmlMode);
+    if (url) formatText('insertImage', url);
   };
 
   const handleContentChange = () => {
-    if (isHtmlMode && textareaRef.current) {
-      const newContent = textareaRef.current.value;
-      setHtmlContent(newContent);
-      onChange(newContent);
-    } else if (!isHtmlMode && editorRef.current) {
-      const newContent = editorRef.current.innerHTML;
-      onChange(newContent);
+    if (editorRef.current) {
+      onChange(editorRef.current.innerHTML);
     }
   };
 
+  const handleHtmlChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onChange(e.target.value);
+  };
+
+  const toolbarButtons = [
+    { icon: faBold, command: 'bold', title: 'Bold' },
+    { icon: faItalic, command: 'italic', title: 'Italic' },
+    { icon: faUnderline, command: 'underline', title: 'Underline' },
+    { icon: faStrikethrough, command: 'strikethrough', title: 'Strikethrough' },
+  ];
+
+  const listButtons = [
+    { icon: faListUl, command: 'insertUnorderedList', title: 'Unordered List' },
+    { icon: faListOl, command: 'insertOrderedList', title: 'Ordered List' },
+    { icon: faQuoteRight, command: 'formatBlock', value: 'blockquote', title: 'Blockquote' },
+  ];
+
+  const mediaButtons = [
+    { icon: faLink, action: insertLink, title: 'Insert Link' },
+    { icon: faImage, action: insertImage, title: 'Insert Image' },
+  ];
+
   return (
-    <div className="editor-container">
-      <div className="editor-toolbar">
-        <div className="toolbar-group">
-          <button 
-            type="button" 
-            className="editor-btn" 
-            onClick={() => formatText('bold')} 
-            title="Bold"
-          >
-            <i className="fas fa-bold"></i>
-          </button>
-          <button 
-            type="button" 
-            className="editor-btn" 
-            onClick={() => formatText('italic')} 
-            title="Italic"
-          >
-            <i className="fas fa-italic"></i>
-          </button>
-          <button 
-            type="button" 
-            className="editor-btn" 
-            onClick={() => formatText('underline')} 
-            title="Underline"
-          >
-            <i className="fas fa-underline"></i>
-          </button>
-          <button 
-            type="button" 
-            className="editor-btn" 
-            onClick={() => formatText('strikeThrough')} 
-            title="Strikethrough"
-          >
-            <i className="fas fa-strikethrough"></i>
-          </button>
-        </div>
-        
-        <div className="toolbar-group">
-          <button 
-            type="button" 
-            className="editor-btn" 
-            onClick={() => formatText('insertOrderedList')} 
-            title="Numbered List"
-          >
-            <i className="fas fa-list-ol"></i>
-          </button>
-          <button 
-            type="button" 
-            className="editor-btn" 
-            onClick={() => formatText('insertUnorderedList')} 
-            title="Bullet List"
-          >
-            <i className="fas fa-list-ul"></i>
-          </button>
-        </div>
-        
-        <div className="toolbar-group">
-          <button 
-            type="button" 
-            className="editor-btn" 
-            onClick={() => formatText('justifyLeft')} 
-            title="Align Left"
-          >
-            <i className="fas fa-align-left"></i>
-          </button>
-          <button 
-            type="button" 
-            className="editor-btn" 
-            onClick={() => formatText('justifyCenter')} 
-            title="Align Center"
-          >
-            <i className="fas fa-align-center"></i>
-          </button>
-          <button 
-            type="button" 
-            className="editor-btn" 
-            onClick={() => formatText('justifyRight')} 
-            title="Align Right"
-          >
-            <i className="fas fa-align-right"></i>
-          </button>
-        </div>
-        
-        <div className="toolbar-group">
-          <button 
-            type="button" 
-            className="editor-btn" 
-            onClick={insertLink} 
-            title="Insert Link"
-          >
-            <i className="fas fa-link"></i>
-          </button>
-          <button 
-            type="button" 
-            className="editor-btn" 
-            onClick={insertImage} 
-            title="Insert Image"
-          >
-            <i className="fas fa-image"></i>
-          </button>
-        </div>
-        
-        <div className="toolbar-group">
+    <div className="border border-slate-200 rounded-lg bg-white overflow-hidden">
+      <div className="bg-slate-50 border-b border-slate-200 p-2 flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-1">
           <select 
-            className="format-select" 
-            onChange={(e) => formatHeading(e.target.value)}
-            defaultValue=""
+            onChange={(e) => formatText('formatBlock', e.target.value)}
+            className="px-2 py-1.5 border border-slate-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
-            <option value="">Normal Text</option>
+            <option value="div">Paragraph</option>
             <option value="h1">Heading 1</option>
             <option value="h2">Heading 2</option>
             <option value="h3">Heading 3</option>
-            <option value="blockquote">Quote</option>
           </select>
         </div>
-        
-        <div className="toolbar-group">
-          <button 
-            type="button" 
-            className="editor-btn" 
-            onClick={toggleMode} 
-            title="Toggle HTML/Visual"
-          >
-            <i className="fas fa-code"></i> 
-            {isHtmlMode ? 'Visual' : 'HTML'}
-          </button>
+        <div className="flex items-center gap-1 p-1 border-l border-r border-slate-200">
+          {toolbarButtons.map(btn => (
+            <button key={btn.command} type="button" onClick={() => formatText(btn.command)} title={btn.title} className="w-8 h-8 text-slate-600 hover:bg-slate-200 rounded-md">
+              <FontAwesomeIcon icon={btn.icon} />
+            </button>
+          ))}
         </div>
+        <div className="flex items-center gap-1 p-1 border-r border-slate-200">
+          {listButtons.map(btn => (
+            <button key={btn.command} type="button" onClick={() => formatText(btn.command, btn.value)} title={btn.title} className="w-8 h-8 text-slate-600 hover:bg-slate-200 rounded-md">
+              <FontAwesomeIcon icon={btn.icon} />
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-1 p-1">
+          {mediaButtons.map(btn => (
+            <button key={btn.title} type="button" onClick={btn.action} title={btn.title} className="w-8 h-8 text-slate-600 hover:bg-slate-200 rounded-md">
+              <FontAwesomeIcon icon={btn.icon} />
+            </button>
+          ))}
+        </div>
+        <div className="flex-grow" />
+        <button type="button" onClick={() => setIsHtmlMode(!isHtmlMode)} title="Toggle HTML Mode" className={`w-8 h-8 text-slate-600 hover:bg-slate-200 rounded-md ${isHtmlMode ? 'bg-blue-100 text-blue-600' : ''}`}>
+          <FontAwesomeIcon icon={faCode} />
+        </button>
       </div>
 
       {isHtmlMode ? (
         <textarea
-          ref={textareaRef}
-          className="editor-html"
-          value={htmlContent}
-          onChange={handleContentChange}
-          placeholder={`HTML code for: ${placeholder}`}
+          value={content}
+          onChange={handleHtmlChange}
+          className="w-full h-64 p-4 font-mono text-sm bg-slate-900 text-green-400 outline-none resize-y"
+          placeholder={placeholder}
         />
       ) : (
         <div
           ref={editorRef}
-          className="editor-content"
           contentEditable
           onInput={handleContentChange}
+          className="min-h-[250px] p-4 outline-none text-sm leading-relaxed text-slate-800 prose max-w-none"
           data-placeholder={placeholder}
-          suppressContentEditableWarning={true}
         />
       )}
     </div>

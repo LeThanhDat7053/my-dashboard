@@ -1,5 +1,3 @@
-// src/pages/Categories.tsx - UPDATED với TranslateModal
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCategories } from '../hooks/useCategories';
@@ -8,10 +6,8 @@ import { useModal } from '../hooks/useModal';
 import { SearchFilters } from '../components/categories/SearchFilters';
 import { CategoryCard } from '../components/categories/CategoryCard';
 import { CategoryModal } from '../components/categories/CategoryModal';
-import { TranslateModal } from '../components/categories/TranslateModal'; // ← THÊM IMPORT
-import type { Category, CategoryFormData, Language } from '../types/categories'; // ← THÊM Language
-
-import '../styles/categories.css';
+import { TranslateModal } from '../components/categories/TranslateModal';
+import type { Category, CategoryFormData, Language } from '../types/categories';
 
 const Categories: React.FC = () => {
   const navigate = useNavigate();
@@ -19,7 +15,7 @@ const Categories: React.FC = () => {
   const { filters, filteredCategories, updateFilters } = useFilters(categories);
   
   const categoryModal = useModal<Category>();
-  const translateModal = useModal<Category>(); // Giữ nguyên
+  const translateModal = useModal<Category>();
 
   const handleSaveCategory = async (formData: CategoryFormData): Promise<void> => {
     try {
@@ -59,7 +55,6 @@ const Categories: React.FC = () => {
     categoryModal.openModal();
   };
 
-  // ← THÊM HANDLER CHO TRANSLATE
   const handleAcceptTranslation = async (categoryId: number, targetLang: Language, translatedData: any): Promise<void> => {
     try {
       console.log('Accepting translation:', { categoryId, targetLang, translatedData });
@@ -77,24 +72,24 @@ const Categories: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="text-lg text-gray-600">Loading categories...</div>
       </div>
     );
   }
 
   return (
-    <div className="categories-page">
+    <div className="p-6 bg-gray-50 min-h-screen">
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Feature Categories</h1>
-            <p className="text-gray-600 mt-1">Organize your hotel features into logical categories</p>
+            <h1 className="text-3xl font-bold text-gray-900">Feature Categories</h1>
+            <p className="text-gray-600 mt-1">Organize your hotel features into logical categories.</p>
           </div>
           <button
             onClick={handleAddCategory}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 focus:outline-none"
+            className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all"
           >
             + Add Category
           </button>
@@ -108,8 +103,9 @@ const Categories: React.FC = () => {
 
       {/* Categories Grid */}
       {filteredCategories.length === 0 ? (
-        <div className="text-center text-gray-500 py-12">
-          No categories found. Try adjusting your filters or add a new category.
+        <div className="text-center text-gray-500 py-16 bg-white rounded-lg shadow">
+          <h3 className="text-xl font-semibold mb-2">No Categories Found</h3>
+          <p>Try adjusting your filters or add a new category to get started.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -134,7 +130,7 @@ const Categories: React.FC = () => {
         category={categoryModal.modalData ?? undefined}
       />
 
-      {/* ← THAY THẾ TRANSLATE MODAL PLACEHOLDER BẰNG COMPONENT THẬT */}
+      {/* Translate Modal */}
       <TranslateModal
         isOpen={translateModal.isOpen}
         onClose={translateModal.closeModal}

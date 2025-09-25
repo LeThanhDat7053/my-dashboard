@@ -1,74 +1,105 @@
-// // src/components/layout/Sidebar.tsx
-// import React from "react";
-// import { Link, useLocation } from "react-router-dom";
+// src/components/layout/Sidebar.tsx
+import React from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faHotel, faHome, faLayerGroup, faPuzzlePiece, faBuilding, 
+  faImages, faChartLine, faUsers, faCog, faSignOutAlt
+} from '@fortawesome/free-solid-svg-icons';
 
-// const Sidebar: React.FC = () => {
-//   const location = useLocation();
+const Sidebar: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
 
-//   return (
-//     <aside className="sidebar">
-//       <div className="sidebar-header">
-//         <div className="logo">
-//           <div className="logo-icon">
-//             <i className="fas fa-hotel"></i>
-//           </div>
-//           <div className="logo-text">HotelLink360</div>
-//         </div>
-//       </div>
+  const navItems = [
+    {
+      section: 'Main',
+      links: [
+        { path: '/', icon: faHome, label: 'Dashboard' },
+        { path: '/categories', icon: faLayerGroup, label: 'Categories' },
+        { path: '/features', icon: faPuzzlePiece, label: 'Features' },
+        { path: '/properties', icon: faBuilding, label: 'Properties' },
+      ],
+    },
+    {
+      section: 'Content',
+      links: [
+        { path: '/media', icon: faImages, label: 'Media Library' },
+        { path: '/analytics', icon: faChartLine, label: 'Analytics' },
+      ],
+    },
+    {
+      section: 'Management',
+      links: [
+        { path: '/users', icon: faUsers, label: 'Users' },
+        { path: '/settings', icon: faCog, label: 'Settings' },
+      ],
+    },
+  ];
 
-//       <div className="property-selector">
-//         <div className="property-label">Current Property</div>
-//         <div className="property-name">Tabi Tower Hotel</div>
-//       </div>
+  const handleLogout = () => {
+    if (window.confirm("Are you sure you want to log out?")) {
+      // In a real app, you'd clear tokens, etc.
+      console.log("Logging out...");
+      navigate("/login");
+    }
+  };
 
-//       <nav className="nav-menu">
-//         <div className="nav-section">
-//           <div className="nav-section-title">Main</div>
-//           <Link to="/" className={`nav-item ${location.pathname === "/" ? "active" : ""}`}>
-//             <i className="fas fa-home"></i>
-//             Dashboard
-//           </Link>
-//           <Link to="/categories" className={`nav-item ${location.pathname.startsWith("/categories") ? "active" : ""}`}>
-//             <i className="fas fa-layer-group"></i>
-//             Categories
-//           </Link>
-//           <Link to="/features" className={`nav-item ${location.pathname.startsWith("/features") ? "active" : ""}`}>
-//             <i className="fas fa-puzzle-piece"></i>
-//             Features
-//           </Link>
-//           <Link to="/properties" className={`nav-item ${location.pathname.startsWith("/properties") ? "active" : ""}`}>
-//             <i className="fas fa-building"></i>
-//             Properties
-//           </Link>
-//         </div>
+  const isActive = (path: string) => {
+    return location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
+  };
 
-//         <div className="nav-section">
-//           <div className="nav-section-title">Content</div>
-//           <Link to="/media" className={`nav-item ${location.pathname === "/media" ? "active" : ""}`}>
-//             <i className="fas fa-images"></i>
-//             Media Library
-//           </Link>
-//           <Link to="/analytics" className={`nav-item ${location.pathname.startsWith("/analytics") ? "active" : ""}`}>
-//             <i className="fas fa-chart-line"></i>
-//             Analytics
-//           </Link>
-//         </div>
+  return (
+    <aside className="bg-slate-800 text-slate-100 w-64 fixed h-full overflow-y-auto hidden sm:block">
+      <div className="p-6 flex items-center gap-3">
+        <div className="bg-blue-600 p-2 rounded-lg">
+          <FontAwesomeIcon icon={faHotel} size="lg" />
+        </div>
+        <span className="text-xl font-bold">HotelLink360</span>
+      </div>
 
-//         <div className="nav-section">
-//           <div className="nav-section-title">Management</div>
-//           <Link to="/users" className={`nav-item ${location.pathname === "/users" ? "active" : ""}`}>
-//             <i className="fas fa-users"></i>
-//             Users
-//           </Link>
-//           <Link to="/settings" className={`nav-item ${location.pathname.startsWith("/settings") ? "active" : ""}`}>
-//             <i className="fas fa-cog"></i>
-//             Settings
-//           </Link>
-//         </div>
+      <div className="px-6 py-4 border-y border-slate-700">
+        <label className="text-xs text-slate-400">Current Property</label>
+        <div className="text-base font-semibold mt-1">Tabi Tower Hotel</div>
+      </div>
 
-//       </nav>
-//     </aside>
-//   );
-// };
+      <nav className="p-6">
+        {navItems.map((section) => (
+          <div key={section.section} className="mb-6">
+            <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{section.section}</h3>
+            <ul>
+              {section.links.map((link) => (
+                <li key={link.path}>
+                  <Link 
+                    to={link.path} 
+                    className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      isActive(link.path) 
+                        ? 'bg-blue-600 text-white' 
+                        : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                    }`}
+                  >
+                    <FontAwesomeIcon icon={link.icon} className="w-5 h-5" />
+                    <span>{link.label}</span>
+                  </Link>
+                </li>
+              ))}
+              {section.section === 'Management' && (
+                <li>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors w-full text-slate-300 hover:bg-slate-700 hover:text-white"
+                  >
+                    <FontAwesomeIcon icon={faSignOutAlt} className="w-5 h-5" />
+                    <span>Logout</span>
+                  </button>
+                </li>
+              )}
+            </ul>
+          </div>
+        ))}
+      </nav>
+    </aside>
+  );
+};
 
-// export default Sidebar;
+export default Sidebar;

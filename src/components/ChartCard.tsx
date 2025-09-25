@@ -1,12 +1,15 @@
 // src/components/ChartCard.tsx
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 interface ChartCardProps {
   title: string;
   value: string | number;
   change?: string;
   changeType?: 'positive' | 'negative';
-  icon: string;
+  icon: IconProp;
   iconBg: string;
   onClick?: () => void;
 }
@@ -21,21 +24,20 @@ const ChartCard: React.FC<ChartCardProps> = ({
   onClick
 }) => {
   return (
-    <div 
-      className={`dashboard-card ${onClick ? 'cursor-pointer hover:shadow-lg' : ''}`}
+    <div
+      className={`p-5 bg-white border border-slate-200 rounded-xl transition-shadow duration-200 ${onClick ? 'cursor-pointer hover:shadow-lg' : ''}`}
       onClick={onClick}
-      style={{ transition: 'box-shadow 0.2s ease' }}
     >
-      <div className="card-header">
-        <div className="card-title">{title}</div>
-        <div className="card-icon" style={{ background: iconBg }}>
-          <i className={icon}></i>
+      <div className="flex items-start justify-between">
+        <div className="text-sm font-medium text-slate-500">{title}</div>
+        <div className="w-10 h-10 rounded-full flex items-center justify-center text-white" style={{ background: iconBg }}>
+          <FontAwesomeIcon icon={icon} />
         </div>
       </div>
-      <div className="card-value">{value}</div>
+      <div className="mt-2 text-3xl font-bold text-slate-900">{value}</div>
       {change && (
-        <div className={`card-change ${changeType}`}>
-          <i className={`fas fa-arrow-${changeType === 'positive' ? 'up' : 'down'}`}></i>
+        <div className={`mt-1 text-xs flex items-center gap-1 ${changeType === 'positive' ? 'text-green-600' : 'text-red-600'}`}>
+          <FontAwesomeIcon icon={changeType === 'positive' ? faArrowUp : faArrowDown} className="w-3 h-3" />
           {change}
         </div>
       )}

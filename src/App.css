@@ -13,6 +13,7 @@
   margin: 0;
   padding: 0;
   text-align: left;
+  
 }
 
 /* Keep only logo animations if needed */
@@ -48,6 +49,7 @@
 
 .card {
   padding: 2em;
+  
 }
 
 .read-the-docs {

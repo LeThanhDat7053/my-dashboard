@@ -1,5 +1,6 @@
-
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch, faBell } from '@fortawesome/free-solid-svg-icons';
 
 interface User {
   id: string;
@@ -42,17 +43,13 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="header">
-      <div className="header-left">
-        <h1 className="page-title">{title}</h1>
-        <div className="breadcrumb">{breadcrumb}</div>
+    <header className="bg-white border-b border-slate-200 px-6 h-16 flex items-center justify-between fixed top-0 left-0 sm:left-64 right-0 z-[100]">
+      <div className="flex items-center gap-4">
+        <h1 className="text-xl font-semibold text-slate-900">{title}</h1>
+        <div className="text-sm text-slate-500 hidden md:block">{breadcrumb}</div>
       </div>
       
-        <div className="header-right">
-        
-        
-        
-      </div>
+      
     </header>
   );
 };

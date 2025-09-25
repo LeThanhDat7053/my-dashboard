@@ -1,19 +1,21 @@
 // src/components/properties/TranslateModal.tsx
 import React, { useState, useEffect } from 'react';
 import type { HotelPost, TranslationData } from '../../types/properties';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes, faLanguage, faSync, faCheck } from '@fortawesome/free-solid-svg-icons';
 
 interface TranslateModalProps {
   isOpen: boolean;
   onClose: () => void;
   post: HotelPost | null;
-  onAccept: (translationData: TranslationData) => void;
+  onSave: (translationData: TranslationData) => void;
 }
 
 export const TranslateModal: React.FC<TranslateModalProps> = ({
   isOpen,
   onClose,
   post,
-  onAccept
+  onSave
 }) => {
   const [targetLanguage, setTargetLanguage] = useState<'en' | 'vi' | 'ja'>('vi');
   const [translationData, setTranslationData] = useState<TranslationData>({
@@ -29,7 +31,6 @@ export const TranslateModal: React.FC<TranslateModalProps> = ({
 
   useEffect(() => {
     if (post) {
-      // Mock original data based on post
       const mockData: TranslationData = {
         originalAddress: post.address || '123 Nguyen Hue Street, District 1, Ho Chi Minh City',
         originalPhone: post.phone || '+84 28 3825 1234',
@@ -44,166 +45,125 @@ export const TranslateModal: React.FC<TranslateModalProps> = ({
   }, [post, targetLanguage]);
 
   const getTranslatedAddress = (lang: string, original: string) => {
-    if (lang === 'vi') {
-      if (original.includes('Nguyen Hue Street')) {
-        return '123 Đường Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh';
-      } else if (original.includes('Dong Khoi Street')) {
-        return '456 Đường Đồng Khởi, Quận 1, TP. Hồ Chí Minh';
-      }
-    } else if (lang === 'ja') {
-      if (original.includes('Nguyen Hue Street')) {
-        return '123ホーチミン市1区グエンフエ通り';
-      } else if (original.includes('Dong Khoi Street')) {
-        return '456ホーチミン市1区ドンコイ通り';
-      }
-    }
+    if (lang === 'vi') return '123 Đường Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh';
+    if (lang === 'ja') return '123ホーチミン市1区グエンフエ通り';
     return original;
   };
 
   const getTranslatedContent = (lang: string, original: string) => {
-    if (lang === 'vi') {
-      return '<strong>Chào mừng đến với Khách sạn Tabi Tower</strong><br>Trải nghiệm sự sang trọng và thoải mái ngay trung tâm thành phố Hồ Chí Minh. Khách sạn 5 sao của chúng tôi cung cấp các tiện nghi đẳng cấp thế giới, tầm nhìn tuyệt đẹp ra thành phố...';
-    } else if (lang === 'ja') {
-      return '<strong>タビタワーホテルへようこそ</strong><br>ホーチミン市の中心部で贅沢と快適さを体験してください。5つ星ホテルは世界クラスの設備、素晴らしい街の景色、優れたサービスを提供します...';
-    } else if (lang === 'en') {
-      return '<strong>Welcome to Tabi Tower Hotel</strong><br>Experience luxury and comfort at the heart of Ho Chi Minh City. Our 5-star hotel offers world-class amenities, stunning city views, and exceptional service...';
-    }
+    if (lang === 'vi') return '<strong>Chào mừng đến với Khách sạn Tabi Tower</strong><br>Trải nghiệm sự sang trọng và thoải mái...';
+    if (lang === 'ja') return '<strong>タビタワーホテルへようこそ</strong><br>ホーチミン市の中心部で贅沢と快適さを体験してください...';
     return original;
   };
 
-  const handleRegenerateTranslation = async () => {
+  const handleRegenerate = async () => {
     setIsRegenerating(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Generate alternative translation
-    const newTranslation = { ...translationData };
-    
-    if (targetLanguage === 'vi') {
-      newTranslation.translatedAddress = '123 Đường Nguyễn Huệ, Quận 1, Thành phố Hồ Chí Minh (Phiên bản 2)';
-      newTranslation.translatedContent = '<strong>Chào mừng đến với Khách sạn Tabi Tower (Phiên bản 2)</strong><br>Xin chào và chào mừng đến với Khách sạn Tabi Tower! Chúng tôi đã thiết kế trải nghiệm khách sạn để mang lại sự thuận tiện và hiệu quả tối đa cho quý khách...';
-    } else if (targetLanguage === 'ja') {
-      newTranslation.translatedAddress = '123ホーチミン市第1区グエンフエ通り (バージョン2)';
-      newTranslation.translatedContent = '<strong>タビタワーホテルへようこそ (バージョン2)</strong><br>ホーチミン市の中心部で最高級の贅沢と快適さをお楽しみください。私たちの5つ星ホテルは世界最高水準の設備とサービスを提供いたします...';
-    } else if (targetLanguage === 'en') {
-      newTranslation.translatedAddress = '123 Nguyen Hue Street, District 1, Ho Chi Minh City (Version 2)';
-      newTranslation.translatedContent = '<strong>Welcome to Tabi Tower Hotel (Version 2)</strong><br>Discover unparalleled luxury and comfort in the vibrant heart of Ho Chi Minh City. Our premium 5-star establishment delivers exceptional world-class amenities and service...';
-    }
-    
-    setTranslationData(newTranslation);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setTranslationData(prev => ({
+      ...prev,
+      translatedContent: getTranslatedContent(targetLanguage, prev.originalContent) + ' (regenerated)',
+    }));
     setIsRegenerating(false);
   };
 
-  const handleAcceptTranslation = () => {
-    onAccept(translationData);
-    onClose();
+  const handleSave = () => {
+    onSave(translationData);
   };
 
-  if (!isOpen || !post) return null;
+  if (!isOpen) return null;
 
   return (
-    <div className="modal show">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h3 className="modal-title">AI Translation</h3>
-          <button className="close-btn" onClick={onClose}>
-            <i className="fas fa-times"></i>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[200] p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+        <header className="p-5 border-b border-slate-200 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <FontAwesomeIcon icon={faLanguage} className="text-xl text-slate-600" />
+            <h2 className="text-lg font-bold text-slate-800">Translate Post</h2>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-100">
+            <FontAwesomeIcon icon={faTimes} className="text-slate-600" />
           </button>
-        </div>
+        </header>
 
-        <div className="form-group">
-          <label className="form-label">Select target language:</label>
-          <select
-            className="form-input"
-            value={targetLanguage}
-            onChange={(e) => setTargetLanguage(e.target.value as 'en' | 'vi' | 'ja')}
-          >
-            <option value="vi">Vietnamese (Tiếng Việt)</option>
-            <option value="ja">Japanese (日本語)</option>
-            <option value="en">English</option>
-          </select>
-        </div>
+        <div className="p-6 flex-grow overflow-y-auto">
+          <div className="mb-6">
+            <label className="font-semibold text-slate-700 mb-2 block">Translate to:</label>
+            <div className="flex gap-2">
+              {['vi', 'ja', 'en'].map(lang => (
+                <button 
+                  key={lang}
+                  onClick={() => setTargetLanguage(lang as 'vi' | 'ja' | 'en')}
+                  className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                    targetLanguage === lang 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  {lang === 'vi' ? '🇻🇳 Tiếng Việt' : lang === 'ja' ? '🇯🇵 日本語' : '🇬🇧 English'}
+                </button>
+              ))}
+            </div>
+          </div>
 
-        <div className="form-group">
-          <label className="form-label">Hotel Information:</label>
-          <div className="translation-section original">
-            <div className="form-row">
-              <div style={{ flex: 1 }}>
-                <label className="translation-label">Original Address:</label>
-                <div className="translation-content">{translationData.originalAddress}</div>
+          <div className="grid grid-cols-2 gap-6">
+            {/* Original Content */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-slate-800 border-b pb-2">Original ({post?.locale})</h3>
+              <div>
+                <label className="text-sm font-medium text-slate-600">Address</label>
+                <p className="mt-1 p-2 bg-slate-50 rounded-md text-sm">{translationData.originalAddress}</p>
               </div>
-              <div style={{ flex: 1 }}>
-                <label className="translation-label">Original Phone:</label>
-                <div className="translation-content">{translationData.originalPhone}</div>
+              <div>
+                <label className="text-sm font-medium text-slate-600">Phone</label>
+                <p className="mt-1 p-2 bg-slate-50 rounded-md text-sm">{translationData.originalPhone}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-600">Content</label>
+                <div className="mt-1 p-2 bg-slate-50 rounded-md text-sm prose max-w-none" dangerouslySetInnerHTML={{ __html: translationData.originalContent }} />
+              </div>
+            </div>
+
+            {/* Translated Content */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-slate-800 border-b pb-2">Translation ({targetLanguage})</h3>
+              <div>
+                <label className="text-sm font-medium text-slate-600">Address</label>
+                <input type="text" value={translationData.translatedAddress} onChange={e => setTranslationData({...translationData, translatedAddress: e.target.value})} className="w-full mt-1 p-2 border border-slate-300 rounded-md text-sm" />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-600">Phone</label>
+                <input type="text" value={translationData.translatedPhone} onChange={e => setTranslationData({...translationData, translatedPhone: e.target.value})} className="w-full mt-1 p-2 border border-slate-300 rounded-md text-sm" />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-600">Content</label>
+                <textarea value={translationData.translatedContent} onChange={e => setTranslationData({...translationData, translatedContent: e.target.value})} rows={8} className="w-full mt-1 p-2 border border-slate-300 rounded-md text-sm" />
               </div>
             </div>
           </div>
-          <div className="translation-section translated">
-            <div className="form-row">
-              <div style={{ flex: 1 }}>
-                <label className="translation-label translated">Translated Address:</label>
-                <div className="translation-content">{translationData.translatedAddress}</div>
-              </div>
-              <div style={{ flex: 1 }}>
-                <label className="translation-label translated">Translated Phone:</label>
-                <div className="translation-content">{translationData.translatedPhone}</div>
-              </div>
-            </div>
-          </div>
         </div>
 
-        <div className="form-group">
-          <label className="form-label">Original Content:</label>
-          <div className="translation-section original">
-            <div 
-              className="translation-content" 
-              dangerouslySetInnerHTML={{ __html: translationData.originalContent }}
-            />
-          </div>
-        </div>
-
-        <div className="form-group">
-          <label className="form-label">AI Translation:</label>
-          <div className="translation-section translated">
-            <div 
-              className="translation-content"
-              dangerouslySetInnerHTML={{ __html: translationData.translatedContent }}
-            />
-          </div>
-        </div>
-
-        <div className="modal-actions">
-          <button type="button" className="btn-cancel" onClick={onClose}>
-            Cancel
-          </button>
+        <footer className="p-5 border-t border-slate-200 flex justify-between items-center bg-slate-50 rounded-b-2xl">
           <button 
-            type="button" 
-            className="btn-primary" 
-            onClick={handleRegenerateTranslation}
+            onClick={handleRegenerate}
             disabled={isRegenerating}
+            className="px-4 py-2 rounded-lg font-semibold text-sm text-slate-700 bg-white border border-slate-300 flex items-center gap-2 hover:bg-slate-100 disabled:opacity-50"
           >
-            {isRegenerating ? (
-              <>
-                <i className="fas fa-spinner fa-spin"></i>
-                Regenerating...
-              </>
-            ) : (
-              <>
-                <i className="fas fa-redo"></i>
-                Regenerate
-              </>
-            )}
+            <FontAwesomeIcon icon={faSync} spin={isRegenerating} />
+            {isRegenerating ? 'Regenerating...' : 'Regenerate'}
           </button>
-          <button 
-            type="button" 
-            className="btn-save" 
-            onClick={handleAcceptTranslation}
-          >
-            <i className="fas fa-check"></i>
-            Use Translation
-          </button>
-        </div>
+          <div className="flex gap-3">
+            <button onClick={onClose} className="px-4 py-2 rounded-lg font-semibold text-sm text-slate-700 bg-white border border-slate-300 hover:bg-slate-100">
+              Cancel
+            </button>
+            <button 
+              onClick={handleSave}
+              className="px-4 py-2 rounded-lg font-semibold text-sm text-white bg-blue-600 flex items-center gap-2 hover:bg-blue-700"
+            >
+              <FontAwesomeIcon icon={faCheck} />
+              Accept & Save
+            </button>
+          </div>
+        </footer>
       </div>
     </div>
   );
