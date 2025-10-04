@@ -66,7 +66,7 @@ export const TranslateModal: React.FC<TranslateModalProps> = ({
     setIsRegenerating(false);
   };
 
-  const handleSave = () => {
+  const handleSave = () => {  
     onSave(translationData);
   };
 
